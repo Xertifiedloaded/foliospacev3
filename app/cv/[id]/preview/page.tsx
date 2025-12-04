@@ -102,10 +102,10 @@ export default function CVPreviewPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
-                <Skeleton className="h-9 w-9 rounded-md flex-shrink-0" />
+                <Skeleton className="h-9 w-9 rounded-md shrink-0" />
                 <Skeleton className="h-6 w-32 sm:w-48" />
               </div>
-              <div className="flex gap-2 flex-shrink-0">
+              <div className="flex gap-2 shrink-0">
                 <Skeleton className="h-9 w-16 sm:w-20 hidden sm:block" />
                 <Skeleton className="h-9 w-9 sm:hidden" />
                 <Skeleton className="h-9 w-24 sm:w-32" />
@@ -144,12 +144,12 @@ export default function CVPreviewPage() {
                 variant="ghost" 
                 size="icon" 
                 onClick={() => router.back()}
-                className="flex-shrink-0"
+                className="shrink-0"
               >
-                <ArrowLeft className="h-4 w-4" />
+                <ArrowLeft className="h-2 w-2" />
               </Button>
               <div className="min-w-0">
-                <h1 className="text-lg sm:text-xl lg:text-2xl font-bold truncate">
+                <h1 className="text-lg capitalize sm:text-xl lg:text-2xl font-bold truncate">
                   {cv.title}
                 </h1>
                 <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
@@ -158,29 +158,28 @@ export default function CVPreviewPage() {
               </div>
             </div>
 
-            {/* Right section - Action buttons */}
-            <div className="flex gap-2 flex-shrink-0">
-              {/* Desktop buttons */}
+            <div className="flex gap-2 shrink-0">
+    
               <Button 
                 variant="outline" 
                 size="sm"
                 onClick={handlePrint}
                 className="hidden lg:flex"
               >
-                <Printer className="h-4 w-4 mr-2" />
+                <Printer className="h-2 w-2 mr-2" />
                 Print
               </Button>
               
               <Link href={`/cv/${cvId}/edit`}>
                 <Button variant="outline" size="sm" className="hidden sm:flex">
-                  <Edit className="h-4 w-4 mr-2" />
+                  <Edit className="h-2 w-2 mr-2" />
                   Edit
                 </Button>
               </Link>
 
               <Link href={`/cv/${cvId}/edit`} className="sm:hidden">
                 <Button variant="outline" size="icon">
-                  <Edit className="h-4 w-4" />
+                  <Edit className="h-2 w-2" />
                 </Button>
               </Link>
 
@@ -188,9 +187,9 @@ export default function CVPreviewPage() {
                 onClick={handleExport} 
                 disabled={exporting}
                 size="sm"
-                className="min-w-[100px] sm:min-w-[120px]"
+                className="min-w-[100px] text-xs sm:min-w-[120px]"
               >
-                <Download className="h-4 w-4 mr-2" />
+                <Download className="h-3 w-3 mr-2" />
                 {exporting ? "Exporting..." : "Export PDF"}
               </Button>
             </div>
@@ -199,7 +198,6 @@ export default function CVPreviewPage() {
       </div>
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 lg:py-12">
-        {/* Info banner - mobile only */}
         <div className="sm:hidden mb-4 p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 rounded-lg">
           <p className="text-xs text-blue-900 dark:text-blue-100 text-center">
             Scroll to view full CV • Tap Export to download
@@ -222,12 +220,12 @@ export default function CVPreviewPage() {
               onClick={handlePrint}
               className="flex-1"
             >
-              <Printer className="h-4 w-4 mr-2" />
+              <Printer className="h-2 w-2 mr-2" />
               Print
             </Button>
             <Link href={`/cv/${cvId}/edit`} className="flex-1">
               <Button variant="outline" size="sm" className="w-full">
-                <Edit className="h-4 w-4 mr-2" />
+                <Edit className="h-2 w-2 mr-2" />
                 Edit
               </Button>
             </Link>

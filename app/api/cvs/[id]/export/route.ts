@@ -34,78 +34,83 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const educations = (cv.educations as any[]) || []
     const experiences = (cv.experiences as any[]) || []
     const skills = (cv.skills as any[]) || []
-    const projects = (cv.projects as any[]) || []
 
-    let yPosition = 20
-    const pageWidth = doc.internal.pageSize.getWidth()
-    const margin = 15
-    const contentWidth = pageWidth - 2 * margin
-
-    // ATS-friendly colors
-    const primaryColor = "#2C5282" // Professional blue
-    const secondaryColor = "#4A5568" // Dark gray
-    const accentColor = "#3182CE" // Lighter blue
-    const textColor = "#1A202C" // Near black for best readability
-
-    const addText = (
-      text: string, 
-      x: number,
-      fontSize: number, 
-      isBold: boolean = false, 
-      color: string = textColor,
-      align: "left" | "right" = "left"
-    ) => {
-      doc.setFontSize(fontSize)
-      doc.setFont("helvetica", isBold ? "bold" : "normal")
-      doc.setTextColor(color)
+    const sortedExperiences = [...experiences].sort((a, b) => {
+      const aActive = !a.endDate
+      const bActive = !b.endDate
       
-      const lines = doc.splitTextToSize(text, align === "right" ? contentWidth * 0.3 : contentWidth * 0.65)
-      lines.forEach((line: string) => {
-        if (yPosition > 280) {
-          doc.addPage()
-          yPosition = 20
-        }
-        if (align === "right") {
-          const textWidth = doc.getTextWidth(line)
-          doc.text(line, pageWidth - margin - textWidth, yPosition)
-        } else {
-          doc.text(line, x, yPosition)
-        }
-        yPosition += fontSize * 0.5
-      })
+      if (aActive && !bActive) return -1
+      if (!aActive && bActive) return 1
+      
+      if (!aActive && !bActive) {
+        const aDate = new Date(a.endDate).getTime()
+        const bDate = new Date(b.endDate).getTime()
+        return bDate - aDate
+      }
+      
+      return 0
+    })
+
+    const sortedEducations = [...educations].sort((a, b) => {
+      const aOngoing = !a.endDate
+      const bOngoing = !b.endDate
+      
+      if (aOngoing && !bOngoing) return -1
+      if (!aOngoing && bOngoing) return 1
+      
+      if (!aOngoing && !bOngoing) {
+        const aDate = new Date(a.endDate).getTime()
+        const bDate = new Date(b.endDate).getTime()
+        return bDate - aDate
+      }
+      
+      return 0
+    })
+
+    const pageWidth = doc.internal.pageSize.getWidth()
+    const pageHeight = doc.internal.pageSize.getHeight()
+    const horizontalMargin = 25.4
+    const verticalMargin = 15.24
+    const contentWidth = pageWidth - 2 * horizontalMargin
+    let yPosition = verticalMargin
+
+
+    const primaryColor = "#2C5282"
+    const secondaryColor = "#4A5568"
+    const accentColor = "#3182CE"
+    const textColor = "#1A202C"
+
+    const checkPageBreak = (neededSpace: number = 15) => {
+      if (yPosition + neededSpace > pageHeight - verticalMargin) {
+        doc.addPage()
+        yPosition = verticalMargin
+        return true
+      }
+      return false
     }
 
     const addSection = (title: string) => {
-      if (yPosition > 270) {
-        doc.addPage()
-        yPosition = 20
-      }
+      checkPageBreak(15)
       yPosition += 6
       
       doc.setFillColor(primaryColor)
-      doc.rect(margin - 2, yPosition - 4, contentWidth + 4, 7, "F")
+      doc.rect(horizontalMargin - 2, yPosition - 4, contentWidth + 4, 7, "F")
       
       doc.setFontSize(11)
       doc.setFont("helvetica", "bold")
       doc.setTextColor("#FFFFFF")
-      doc.text(title.toUpperCase(), margin, yPosition)
+      doc.text(title.toUpperCase(), horizontalMargin, yPosition)
       yPosition += 8
     }
 
-    const resetYPosition = () => {
-      const startY = yPosition
-      return startY
-    }
-
-
+    // HEADER - Name and Contact Info
     if (personalInfo.fullName) {
       doc.setFontSize(24)
       doc.setFont("helvetica", "bold")
       doc.setTextColor(primaryColor)
-      doc.text(personalInfo.fullName.toUpperCase(), margin, yPosition)
+      doc.text(personalInfo.fullName.toUpperCase(), horizontalMargin, yPosition)
       yPosition += 8
 
-      // Contact information in two columns
       doc.setFontSize(9)
       doc.setFont("helvetica", "normal")
       doc.setTextColor(secondaryColor)
@@ -121,11 +126,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       if (personalInfo.website) rightColumn.push(`Website: ${personalInfo.website}`)
 
       const maxRows = Math.max(leftColumn.length, rightColumn.length)
-      const contactStartY = yPosition
 
       for (let i = 0; i < maxRows; i++) {
         if (leftColumn[i]) {
-          doc.text(leftColumn[i], margin, yPosition)
+          doc.text(leftColumn[i], horizontalMargin, yPosition)
         }
         if (rightColumn[i]) {
           doc.text(rightColumn[i], pageWidth / 2 + 5, yPosition)
@@ -133,11 +137,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         yPosition += 4.5
       }
 
-
       yPosition += 2
       doc.setDrawColor(accentColor)
       doc.setLineWidth(0.5)
-      doc.line(margin, yPosition, pageWidth - margin, yPosition)
+      doc.line(horizontalMargin, yPosition, pageWidth - horizontalMargin, yPosition)
       yPosition += 3
     }
 
@@ -149,25 +152,24 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       doc.setTextColor(textColor)
       const summaryLines = doc.splitTextToSize(personalInfo.summary, contentWidth)
       summaryLines.forEach((line: string) => {
-        if (yPosition > 280) {
-          doc.addPage()
-          yPosition = 20
-        }
-        doc.text(line, margin, yPosition)
+        checkPageBreak()
+        doc.text(line, horizontalMargin, yPosition)
         yPosition += 5
       })
       yPosition += 2
     }
 
-    if (experiences.length > 0) {
+    // PROFESSIONAL EXPERIENCE
+    if (sortedExperiences.length > 0) {
       addSection("Professional Experience")
-      experiences.forEach((exp: any, idx: number) => {
+      sortedExperiences.forEach((exp: any, idx: number) => {
         if (idx > 0) yPosition += 5
+        checkPageBreak(20)
 
         doc.setFontSize(11)
         doc.setFont("helvetica", "bold")
         doc.setTextColor(primaryColor)
-        doc.text(exp.position, margin, yPosition)
+        doc.text(exp.position, horizontalMargin, yPosition)
 
         doc.setFontSize(9)
         doc.setFont("helvetica", "normal")
@@ -176,24 +178,21 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         const endYear = exp.endDate ? exp.endDate.split('-')[0] : 'Present'
         const dateText = startYear && endYear ? `${startYear} - ${endYear}` : startYear || endYear
         const dateWidth = doc.getTextWidth(dateText)
-        doc.text(dateText, pageWidth - margin - dateWidth, yPosition)
+        doc.text(dateText, pageWidth - horizontalMargin - dateWidth, yPosition)
         
         yPosition += 5
 
-        // Company name
         doc.setFontSize(10)
         doc.setFont("helvetica", "bold")
         doc.setTextColor(secondaryColor)
-        doc.text(exp.company, margin, yPosition)
+        doc.text(exp.company, horizontalMargin, yPosition)
         yPosition += 5
 
-        // Description with bullet points (split by periods)
         if (exp.description) {
           doc.setFontSize(9)
           doc.setFont("helvetica", "normal")
           doc.setTextColor(textColor)
           
-          // Split by period and filter out empty strings
           const descriptions = exp.description
             .split('.')
             .map((d: string) => d.trim())
@@ -203,14 +202,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             const bullet = "• "
             const descLines = doc.splitTextToSize(desc, contentWidth - 5)
             descLines.forEach((line: string, lineIdx: number) => {
-              if (yPosition > 280) {
-                doc.addPage()
-                yPosition = 20
-              }
+              checkPageBreak()
               if (lineIdx === 0) {
-                doc.text(bullet + line, margin + 2, yPosition)
+                doc.text(bullet + line, horizontalMargin + 2, yPosition)
               } else {
-                doc.text(line, margin + 7, yPosition)
+                doc.text(line, horizontalMargin + 7, yPosition)
               }
               yPosition += 4.5
             })
@@ -221,14 +217,17 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       yPosition += 2
     }
 
-    if (educations.length > 0) {
+    // EDUCATION
+    if (sortedEducations.length > 0) {
       addSection("Education")
-      educations.forEach((edu: any, idx: number) => {
+      sortedEducations.forEach((edu: any, idx: number) => {
         if (idx > 0) yPosition += 5
+        checkPageBreak(20)
+        
         doc.setFontSize(11)
         doc.setFont("helvetica", "bold")
         doc.setTextColor(primaryColor)
-        doc.text(edu.degree, margin, yPosition)
+        doc.text(edu.degree, horizontalMargin, yPosition)
 
         doc.setFontSize(9)
         doc.setFont("helvetica", "normal")
@@ -237,29 +236,28 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         const endYear = edu.endDate ? edu.endDate.split('-')[0] : 'In View'
         const dateText = startYear && endYear ? `${startYear} - ${endYear}` : startYear || endYear
         const dateWidth = doc.getTextWidth(dateText)
-        doc.text(dateText, pageWidth - margin - dateWidth, yPosition)
+        doc.text(dateText, pageWidth - horizontalMargin - dateWidth, yPosition)
         
         yPosition += 5
 
-        // School name
         doc.setFontSize(10)
         doc.setFont("helvetica", "bold")
         doc.setTextColor(secondaryColor)
-        doc.text(edu.school, margin, yPosition)
+        doc.text(edu.school, horizontalMargin, yPosition)
         yPosition += 5
 
-        // Field of study
         if (edu.field) {
           doc.setFontSize(9)
           doc.setFont("helvetica", "normal")
           doc.setTextColor(textColor)
-          doc.text(`Field of Study: ${edu.field}`, margin + 2, yPosition)
+          doc.text(`Field of Study: ${edu.field}`, horizontalMargin + 2, yPosition)
           yPosition += 5
         }
       })
       yPosition += 2
     }
 
+    // SKILLS
     if (skills.length > 0) {
       addSection("Skills")
       
@@ -276,13 +274,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       }
 
       skillGroups.forEach((group: any[]) => {
-        if (yPosition > 280) {
-          doc.addPage()
-          yPosition = 20
-        }
+        checkPageBreak()
         
         group.forEach((skill: any, index: number) => {
-          const xPos = margin + (index * columnWidth)
+          const xPos = horizontalMargin + (index * columnWidth)
           const skillText = skill.name
           
           const maxWidth = columnWidth - 2
@@ -297,57 +292,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         yPosition += 5
       })
       yPosition += 2
-    }
-
-    if (projects.length > 0) {
-      addSection("Projects")
-      projects.forEach((proj: any, idx: number) => {
-        if (idx > 0) yPosition += 5
-
-        // Project name
-        doc.setFontSize(11)
-        doc.setFont("helvetica", "bold")
-        doc.setTextColor(primaryColor)
-        doc.text(proj.name, margin, yPosition)
-        yPosition += 5
-
-        // Description
-        if (proj.description) {
-          doc.setFontSize(9)
-          doc.setFont("helvetica", "normal")
-          doc.setTextColor(textColor)
-          const descLines = doc.splitTextToSize(proj.description, contentWidth)
-          descLines.forEach((line: string) => {
-            if (yPosition > 280) {
-              doc.addPage()
-              yPosition = 20
-            }
-            doc.text(line, margin, yPosition)
-            yPosition += 4.5
-          })
-        }
-
-        if (proj.technologies && proj.technologies.length > 0) {
-          yPosition += 1
-          doc.setFontSize(9)
-          doc.setFont("helvetica", "bold")
-          doc.setTextColor(secondaryColor)
-          doc.text(`Technologies: `, margin, yPosition)
-          
-          doc.setFont("helvetica", "normal")
-          const techText = proj.technologies.join(", ")
-          const techLines = doc.splitTextToSize(techText, contentWidth - 30)
-          techLines.forEach((line: string, lineIdx: number) => {
-            if (yPosition > 280) {
-              doc.addPage()
-              yPosition = 20
-            }
-            doc.text(line, margin + (lineIdx === 0 ? 28 : 0), yPosition)
-            if (lineIdx < techLines.length - 1) yPosition += 4.5
-          })
-          yPosition += 5
-        }
-      })
     }
 
     const pdfBuffer = Buffer.from(doc.output("arraybuffer"))

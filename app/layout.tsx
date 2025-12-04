@@ -2,9 +2,9 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
-
+import { Analytics } from '@vercel/analytics/next'
 import { openSans, nunito, bebas, montserrat } from "@/lib/fonts";
-
+import { GoogleAnalytics } from '@next/third-parties/google'
 export const metadata: Metadata = {
   title: "FolioSpace - Multi-CV Manager",
   description: "Create, manage, and export multiple professional CVs with FolioSpace",
@@ -41,7 +41,10 @@ export default function RootLayout({
           ${nunito.variable}
           ${bebas.variable}
           font-sans antialiased bg-background text-foreground
-        `}>{children}</body>
+        `}>{children}
+               <GoogleAnalytics gaId={process.env.GoogleAnalytics} />
+          <Analytics />
+        </body>
     </html>
   )
 }

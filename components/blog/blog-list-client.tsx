@@ -1,10 +1,12 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Search, Grid3x3, List, Flame } from "lucide-react"
+
 import FeaturedBlog from "@/components/blog/featured-blog"
 import BlogCard from "@/components/blog/blog-card"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface BlogPost {
   id: string
@@ -33,12 +35,19 @@ export default function BlogListClient({ initialPosts }: { initialPosts: BlogPos
   const [isGridView, setIsGridView] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [category, setCategory] = useState<"latest" | "recent" | "trending">("latest")
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 1200)
+    return () => clearTimeout(timer)
+  }, [])
 
   const categorizedPosts = useMemo(() => {
     const trending = [...initialPosts]
       .sort(
         (a, b) =>
-          b.views + b._count.likes * 2 + b._count.comments * 3 - (a.views + a._count.likes * 2 + a._count.comments * 3),
+          b.views + b._count.likes * 2 + b._count.comments * 3 -
+          (a.views + a._count.likes * 2 + a._count.comments * 3),
       )
       .slice(0, 12)
 
@@ -47,7 +56,9 @@ export default function BlogListClient({ initialPosts }: { initialPosts: BlogPos
     )
 
     const recent = [...initialPosts].sort(
-      (a, b) => new Date(b.updatedAt || b.publishedAt).getTime() - new Date(a.updatedAt || a.publishedAt).getTime(),
+      (a, b) =>
+        new Date(b.updatedAt || b.publishedAt).getTime() -
+        new Date(a.updatedAt || a.publishedAt).getTime(),
     )
 
     return { trending, latest, recent }
@@ -65,82 +76,115 @@ export default function BlogListClient({ initialPosts }: { initialPosts: BlogPos
 
   return (
     <main className="min-h-screen bg-linear-to-br from-background via-background to-muted/20">
-      {featuredBlog && <FeaturedBlog blog={featuredBlog} />}
+      
+
+      {isLoading ? (
+        <div className="w-full h-[420px] bg-muted/20 rounded-xl animate-pulse" />
+      ) : (
+        featuredBlog && <FeaturedBlog blog={featuredBlog} />
+      )}
 
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-12"
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <Flame className="w-8 h-8 text-primary" />
-            <h1 className="text-4xl sm:text-5xl font-bold">Discover Amazing Stories</h1>
+        
+        {isLoading ? (
+          <div className="mb-10">
+            <Skeleton className="h-10 w-72 mb-4" />
+            <Skeleton className="h-5 w-96" />
           </div>
-          <p className="text-lg text-muted-foreground max-w-2xl">
-            Explore the latest insights, trends, and developer stories.
-          </p>
-        </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mb-12"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <Flame className="w-8 h-8 text-primary" />
+              <h1 className="text-4xl sm:text-5xl font-bold">Discover Amazing Stories</h1>
+            </div>
+            <p className="text-lg text-muted-foreground max-w-2xl">
+              Explore the latest insights, trends, and developer stories.
+            </p>
+          </motion.div>
+        )}
 
-        <div className="relative mb-6">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search blogs..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 rounded-lg border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-          />
-        </div>
 
-        {/* Category & Layout Switch */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-          <div className="flex gap-2 flex-wrap">
-            {(["latest", "recent", "trending"] as const).map((cat) => (
+        {isLoading ? (
+          <Skeleton className="w-full h-12 mb-6 rounded-lg" />
+        ) : (
+          <div className="relative mb-6">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search blogs..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 rounded-lg border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+            />
+          </div>
+        )}
+
+ 
+        {isLoading ? (
+          <div className="flex items-center justify-between mb-8">
+            <Skeleton className="h-10 w-64 rounded-full" />
+            <Skeleton className="h-10 w-24 rounded-lg" />
+          </div>
+        ) : (
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+            <div className="flex gap-2 flex-wrap">
+              {(["latest", "recent", "trending"] as const).map((cat) => (
+                <motion.button
+                  key={cat}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setCategory(cat)}
+                  className={`px-4 py-2 rounded-full font-medium transition-all capitalize ${
+                    category === cat
+                      ? "bg-primary text-primary-foreground shadow-md"
+                      : "bg-muted text-foreground hover:bg-muted/80"
+                  }`}
+                >
+                  {cat === "latest" ? "🆕" : cat === "recent" ? "🕒" : "🔥"} {cat}
+                </motion.button>
+              ))}
+            </div>
+
+            <div className="flex gap-2 bg-muted rounded-lg p-1">
               <motion.button
-                key={cat}
+                onClick={() => setIsGridView(true)}
                 whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setCategory(cat)}
-                className={`px-4 py-2 rounded-full font-medium transition-all capitalize ${
-                  category === cat
-                    ? "bg-primary text-primary-foreground shadow-md"
-                    : "bg-muted text-foreground hover:bg-muted/80"
-                }`}
+                className={`p-2 rounded ${isGridView ? "bg-primary text-white" : "text-muted-foreground"}`}
               >
-                {cat === "latest" ? "🆕" : cat === "recent" ? "🕒" : "🔥"} {cat}
+                <Grid3x3 className="w-5 h-5" />
               </motion.button>
-            ))}
+              <motion.button
+                onClick={() => setIsGridView(false)}
+                whileHover={{ scale: 1.05 }}
+                className={`p-2 rounded ${!isGridView ? "bg-primary text-white" : "text-muted-foreground"}`}
+              >
+                <List className="w-5 h-5" />
+              </motion.button>
+            </div>
           </div>
+        )}
 
-          <div className="flex gap-2 bg-muted rounded-lg p-1">
-            <motion.button
-              onClick={() => setIsGridView(true)}
-              whileHover={{ scale: 1.05 }}
-              className={`p-2 rounded ${isGridView ? "bg-primary text-white" : "text-muted-foreground"}`}
-            >
-              <Grid3x3 className="w-5 h-5" />
-            </motion.button>
-            <motion.button
-              onClick={() => setIsGridView(false)}
-              whileHover={{ scale: 1.05 }}
-              className={`p-2 rounded ${!isGridView ? "bg-primary text-white" : "text-muted-foreground"}`}
-            >
-              <List className="w-5 h-5" />
-            </motion.button>
-          </div>
-        </div>
-
-        {/* Blog Grid/List */}
         <AnimatePresence mode="wait">
-          {filteredPosts.length > 0 ? (
+          {isLoading ? (
+            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-72 w-full rounded-xl" />
+              ))}
+            </div>
+          ) : filteredPosts.length > 0 ? (
             <motion.div
               key={`${isGridView}-${category}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
-              className={`grid gap-6 ${isGridView ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}
+              className={`grid gap-6 ${
+                isGridView ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"
+              }`}
             >
               {filteredPosts.map((blog, i) => (
                 <motion.div
