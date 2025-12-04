@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String   @unique
+  username     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cvs       CV[]
+  blogPosts               BlogPost[]
+}
+
+
+model CV {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String   @db.ObjectId
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title        String
+  personalInfo Json     @default("{}")
+  educations   Json     @default("[]")
+  experiences  Json     @default("[]")
+  skills       Json     @default("[]")
+  projects     Json     @default("[]")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId])
+}
+
+
+model BlogPost {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  slug        String // URL-friendly version of title (e.g., "my-first-post")
+  content     String // Blog post content (markdown or HTML)
+  excerpt     String? // Short description/summary
+  coverImage  String? // Cover image URL
+  tags        String[] // Array of tags
+  isPublished Boolean   @default(false)
+  publishedAt DateTime? // When the post was published
+  readTime    Int? // Estimated read time in minutes
+  views       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String        @db.ObjectId
+  comments BlogComment[]
+  likes    BlogLike[]
+
+  @@unique([userId, slug])
+  @@index([userId, isPublished, publishedAt])
+  @@index([slug])
+}
+
+model BlogComment {
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  author    String
+  email     String
+  website   String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  post      BlogPost      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String        @db.ObjectId
+  parentId  String?       @db.ObjectId
+  parent    BlogComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies   BlogComment[] @relation("CommentReplies")
+
+  @@index([postId, createdAt])
+}
+
+model BlogLike {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  ipAddress String
+  userAgent String?
+  createdAt DateTime @default(now())
+  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String   @db.ObjectId
+  @@unique([postId, ipAddress])
+}
