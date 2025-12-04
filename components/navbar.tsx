@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { FileText, Menu, X, User, LogOut, Settings, BookOpen } from "lucide-react"
 import { useState } from "react"
-
+import { useRouter } from "next/navigation" 
 export function Navbar() {
   const { user, loading,logout } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+    const router = useRouter()
   const handleLogout = async () => {
     await logout()
     router.push("/")

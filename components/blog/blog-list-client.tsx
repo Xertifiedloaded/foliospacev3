@@ -64,7 +64,7 @@ export default function BlogListClient({ initialPosts }: { initialPosts: BlogPos
   const featuredBlog = filteredPosts[0]
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+    <main className="min-h-screen bg-linear-to-br from-background via-background to-muted/20">
       {featuredBlog && <FeaturedBlog blog={featuredBlog} />}
 
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
