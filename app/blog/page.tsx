@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import BlogListClient from "@/components/blog/blog-list-client"
@@ -5,10 +7,13 @@ import BlogListClient from "@/components/blog/blog-list-client"
 async function getPosts() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+
     const response = await fetch(`${baseUrl}/api/posts/all-posts?limit=50`, {
       cache: "no-store",
     })
+
     if (!response.ok) return []
+
     const data = await response.json()
     return data.posts || []
   } catch (error) {
@@ -23,7 +28,11 @@ export default async function BlogPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
-      <BlogListClient initialPosts={posts} />
+
+      <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <BlogListClient initialPosts={posts} />
+      </main>
+
       <Footer />
     </div>
   )
