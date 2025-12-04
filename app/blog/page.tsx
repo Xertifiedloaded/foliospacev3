@@ -6,9 +6,7 @@ import BlogListClient from "@/components/blog/blog-list-client"
 
 async function getPosts() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
-
-    const response = await fetch(`${baseUrl}/api/posts/all-posts?limit=50`, {
+    const response = await fetch(`/api/posts/all-posts?limit=50`, {
       cache: "no-store",
     })
 
