@@ -37,12 +37,22 @@ export default function BlogListClient({ initialPosts }: { initialPosts: BlogPos
   const [category, setCategory] = useState<"latest" | "recent" | "trending">("latest")
   const [isLoading, setIsLoading] = useState(true)
 
+  /**
+   * FIX: Prevent loading from ending before posts hydrate.
+   */
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1200)
-    return () => clearTimeout(timer)
-  }, [])
+    if (initialPosts && initialPosts.length > 0) {
+      const timer = setTimeout(() => setIsLoading(false), 900)
+      return () => clearTimeout(timer)
+    }
+  }, [initialPosts])
 
+  /**
+   * Categorization + sorting
+   */
   const categorizedPosts = useMemo(() => {
+    if (!initialPosts) return { trending: [], latest: [], recent: [] }
+
     const trending = [...initialPosts]
       .sort(
         (a, b) =>
@@ -64,7 +74,7 @@ export default function BlogListClient({ initialPosts }: { initialPosts: BlogPos
     return { trending, latest, recent }
   }, [initialPosts])
 
-  const posts = categorizedPosts[category]
+  const posts = categorizedPosts[category] || []
 
   const filteredPosts = posts.filter(
     (p) =>
@@ -76,7 +86,6 @@ export default function BlogListClient({ initialPosts }: { initialPosts: BlogPos
 
   return (
     <main className="min-h-screen bg-linear-to-br from-background via-background to-muted/20">
-      
 
       {isLoading ? (
         <div className="w-full h-[420px] bg-muted/20 rounded-xl animate-pulse" />
@@ -85,7 +94,8 @@ export default function BlogListClient({ initialPosts }: { initialPosts: BlogPos
       )}
 
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        
+
+        {/* HEADER */}
         {isLoading ? (
           <div className="mb-10">
             <Skeleton className="h-10 w-72 mb-4" />
@@ -108,14 +118,13 @@ export default function BlogListClient({ initialPosts }: { initialPosts: BlogPos
           </motion.div>
         )}
 
-
+        {/* SEARCH */}
         {isLoading ? (
           <Skeleton className="w-full h-12 mb-6 rounded-lg" />
         ) : (
           <div className="relative mb-6">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
-              type="text"
               placeholder="Search blogs..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -124,7 +133,7 @@ export default function BlogListClient({ initialPosts }: { initialPosts: BlogPos
           </div>
         )}
 
- 
+        {/* CATEGORY & GRID/LIST TOGGLE */}
         {isLoading ? (
           <div className="flex items-center justify-between mb-8">
             <Skeleton className="h-10 w-64 rounded-full" />
@@ -169,6 +178,7 @@ export default function BlogListClient({ initialPosts }: { initialPosts: BlogPos
           </div>
         )}
 
+        {/* POSTS LIST */}
         <AnimatePresence mode="wait">
           {isLoading ? (
             <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
@@ -178,7 +188,7 @@ export default function BlogListClient({ initialPosts }: { initialPosts: BlogPos
             </div>
           ) : filteredPosts.length > 0 ? (
             <motion.div
-              key={`${isGridView}-${category}`}
+              key={`${isGridView}-${category}-${searchQuery}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
@@ -191,7 +201,7 @@ export default function BlogListClient({ initialPosts }: { initialPosts: BlogPos
                   key={blog.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: i * 0.05 }}
+                  transition={{ duration: 0.4, delay: i * 0.04 }}
                 >
                   <BlogCard blog={blog} isTrending={category === "trending"} />
                 </motion.div>
