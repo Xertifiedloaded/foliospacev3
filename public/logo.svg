@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background rounded square -->
+  <rect width="512" height="512" rx="96" fill="url(#g)" />
+
+  <!-- Gradient -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#06b6d4"/>
+      <stop offset="1" stop-color="#6366f1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Stylized "F" -->
+  <g fill="#ffffff" transform="translate(120 100)">
+    <!-- vertical bar -->
+    <rect width="80" height="300" rx="16"/>
+    <!-- top bar -->
+    <rect x="80" y="0" width="180" height="80" rx="16"/>
+    <!-- middle bar -->
+    <rect x="80" y="130" width="140" height="80" rx="16"/>
+  </g>
+
+  <!-- "space" dot -->
+  <circle cx="380" cy="340" r="22" fill="#ffffff" opacity="0.95"/>
+</svg>
