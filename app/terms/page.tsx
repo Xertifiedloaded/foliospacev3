@@ -91,7 +91,7 @@ export default function TermsPage() {
               <section>
                 <h2 className="text-2xl font-bold mb-4">Contact Information</h2>
                 <p className="text-base text-muted-foreground leading-relaxed">
-                  If you have any questions about these Terms of Service, please contact us at legal@foliospace.com
+                  If you have any questions about these Terms of Service, please contact us at foliospace@gmail.com
                 </p>
               </section>
             </div>

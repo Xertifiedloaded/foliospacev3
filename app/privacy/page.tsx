@@ -89,7 +89,7 @@ export default function PrivacyPage() {
               <section>
                 <h2 className="text-2xl font-bold mb-4">Contact Us</h2>
                 <p className="text-base text-muted-foreground leading-relaxed">
-                  If you have any questions about this Privacy Policy, please contact us at privacy@foliospace.com
+                  If you have any questions about this Privacy Policy, please contact us at foliospace@gmail.com
                 </p>
               </section>
             </div>

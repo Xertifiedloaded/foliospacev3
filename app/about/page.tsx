@@ -29,8 +29,6 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Navbar />
-      
       <main className="flex-1">
         <section className="px-6 py-20 md:py-28">
           <div className="max-w-4xl mx-auto">
@@ -56,7 +54,7 @@ export default function AboutPage() {
                 return (
                   <Card key={idx} className="p-6">
                     <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <div className="shrink-0 h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
                         <Icon className="h-6 w-6 text-primary" />
                       </div>
                       <div className="space-y-2">

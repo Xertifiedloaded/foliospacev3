@@ -54,7 +54,7 @@ export default function ContactPage() {
                   <Mail className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Email Us</h3>
-                <p className="text-base text-muted-foreground">support@foliospace.com</p>
+                <p className="text-base text-muted-foreground">foliospace@gmail.com</p>
               </Card>
 
               <Card className="p-6 text-center">
