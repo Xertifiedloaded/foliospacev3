@@ -1,11 +1,7 @@
 const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
-
-// Path to changelog
 const changelogPath = path.join(__dirname, "CHANGELOG.json");
-
-// Load old changelog content
 let changelog = { changes: [] };
 
 if (fs.existsSync(changelogPath)) {
@@ -15,8 +11,6 @@ if (fs.existsSync(changelogPath)) {
     console.error("Error reading CHANGELOG.json:", e);
   }
 }
-
-// Get the latest commit message
 let commitMessage = "";
 try {
   commitMessage = execSync("git log -1 --pretty=%B").toString().trim();
@@ -24,21 +18,35 @@ try {
   console.error("Cannot read last commit message:", e);
   process.exit(1);
 }
+function getNextVersion() {
+  if (changelog.changes.length === 0) {
+    return "v1.0.0";
+  }
+  
+  const lastEntry = changelog.changes[changelog.changes.length - 1];
+  const lastVersion = lastEntry.version || "v1.0.0";
 
-// Auto-generate version number
-const version = `v${changelog.changes.length + 1}.${new Date().getMonth() + 1}.${new Date().getDate()}`;
+  const match = lastVersion.match(/v?(\d+)\.(\d+)\.(\d+)/);
+  
+  if (match) {
+    const major = parseInt(match[1]);
+    const minor = parseInt(match[2]);
+    const patch = parseInt(match[3]);
+    
+    return `v${major}.${minor}.${patch + 1}`;
+  }
+  
+  return `v1.0.${changelog.changes.length}`;
+}
+const version = getNextVersion();
 
-// New entry
 const newEntry = {
   version,
   date: new Date().toISOString(),
   message: commitMessage
 };
 
-// Push to the changelog
 changelog.changes.push(newEntry);
-
-// Save updated changelog
 fs.writeFileSync(changelogPath, JSON.stringify(changelog, null, 2));
 
 console.log("CHANGELOG updated:", newEntry);
