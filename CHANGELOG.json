@@ -129,6 +129,11 @@
       "version": "v2.11.1",
       "date": "2025-10-22T16:16:31+01:00",
       "message": "Fixed critical issue causing render interruption."
+    },
+    {
+      "version": "v2.11.2",
+      "date": "2025-12-05T16:17:29.793Z",
+      "message": "fix(blog-list): prevent premature 'No posts found' flash and improve loading logic by waiting for hydrated posts; ensure smooth transitions, stronger typing, and reduced unnecessary re-renders"
     }
   ]
 }
