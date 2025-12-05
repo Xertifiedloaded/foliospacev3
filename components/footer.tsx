@@ -18,12 +18,12 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
+                <Link href="/pricing" className="text-muted-foreground hover:text-foreground">
                   Pricing
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
+                <Link href="/updates" className="text-muted-foreground hover:text-foreground">
                   Updates
                 </Link>
               </li>
@@ -33,7 +33,7 @@ export function Footer() {
             <h3 className="font-semibold mb-4">Company</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
+                <Link href="/about" className="text-muted-foreground hover:text-foreground">
                   About
                 </Link>
               </li>
@@ -43,7 +43,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
+                <Link href="/contact" className="text-muted-foreground hover:text-foreground">
                   Contact
                 </Link>
               </li>
@@ -53,25 +53,20 @@ export function Footer() {
             <h3 className="font-semibold mb-4">Legal</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
+                <Link href="/privacy" className="text-muted-foreground hover:text-foreground">
                   Privacy
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
+                <Link href="/terms" className="text-muted-foreground hover:text-foreground">
                   Terms
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
-                  License
                 </Link>
               </li>
             </ul>
           </div>
         </div>
         <div className="border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; 2025 FolioSpace. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} FolioSpace. All rights reserved.</p>
         </div>
       </div>
     </footer>
