@@ -6,9 +6,19 @@ export async function GET() {
   const filePath = path.join(process.cwd(), "CHANGELOG.json");
 
   try {
-    const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-    return NextResponse.json(data);
+    const file = fs.readFileSync(filePath, "utf-8");
+    const data = JSON.parse(file);
+    const sorted = {
+      changes: data.changes.sort(
+        (a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      ),
+    };
+
+    return NextResponse.json(sorted);
   } catch (error) {
-    return NextResponse.json({ error: "Failed to load changelog" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to load changelog" },
+      { status: 500 }
+    );
   }
 }

@@ -7,18 +7,19 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { CVPreview } from "@/components/cv-preview"
 import type { CVData } from "@/lib/types"
-import { Download, ArrowLeft, Edit, Share2, Printer } from "lucide-react"
+import { Download, ArrowLeft, Edit, Printer, AlertCircle, FileX } from "lucide-react"
 import Link from "next/link"
 
 export default function CVPreviewPage() {
   const params = useParams()
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
-  const cvId = params.id as string
+  const cvId = params?.id as string
 
   const [cv, setCV] = useState<CVData | null>(null)
   const [loading, setLoading] = useState(true)
   const [exporting, setExporting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -29,34 +30,58 @@ export default function CVPreviewPage() {
   useEffect(() => {
     if (user && cvId) {
       fetchCV()
+    } else if (user && !cvId) {
+      setError("Invalid CV ID")
+      setLoading(false)
     }
   }, [user, cvId])
 
   const fetchCV = async () => {
     try {
+      setError(null)
       const response = await fetch(`/api/cvs/${cvId}`)
-      if (response.ok) {
-        const data = await response.json()
-        setCV({
-          ...data,
-          personalInfo: data.personalInfo || {},
-          educations: data.educations || [],
-          experiences: data.experiences || [],
-          skills: data.skills || [],
-          projects: data.projects || [],
-        })
-      } else {
-        router.push("/dashboard")
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          setError("CV not found")
+        } else if (response.status === 403) {
+          setError("You don't have permission to view this CV")
+        } else {
+          setError("Failed to load CV")
+        }
+        setLoading(false)
+        return
       }
+
+      const data = await response.json()
+      
+  
+      if (!data || typeof data !== 'object') {
+        setError("Invalid CV data")
+        setLoading(false)
+        return
+      }
+
+      setCV({
+        ...data,
+        personalInfo: data.personalInfo || {},
+        educations: data.educations || [],
+        experiences: data.experiences || [],
+        skills: data.skills || [],
+        projects: data.projects || [],
+        title: data.title || "Untitled CV"
+      })
     } catch (error) {
       console.error("Failed to fetch CV:", error)
-      router.push("/dashboard")
+      setError("Network error. Please check your connection.")
     } finally {
       setLoading(false)
     }
   }
 
   const handleExport = async () => {
+    if (!cv || !cvId) return
+    
     setExporting(true)
     try {
       const response = await fetch(`/api/cvs/${cvId}/export`)
@@ -81,21 +106,24 @@ export default function CVPreviewPage() {
         document.body.removeChild(a)
         window.URL.revokeObjectURL(url)
       } else {
-        alert("Failed to export PDF")
+        alert("Failed to export PDF. Please try again.")
       }
     } catch (error) {
       console.error("Failed to export CV:", error)
-      alert("Failed to export CV")
+      alert("Failed to export CV. Please check your connection.")
     } finally {
       setExporting(false)
     }
   }
 
   const handlePrint = () => {
-    window.print()
+    if (cv) {
+      window.print()
+    }
   }
 
-  if (loading) {
+  // Loading state
+  if (loading || authLoading) {
     return (
       <div className="min-h-screen bg-background">
         <div className="border-b bg-card sticky top-0 z-10 shadow-sm">
@@ -129,9 +157,101 @@ export default function CVPreviewPage() {
       </div>
     )
   }
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="border-b bg-card">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => router.push("/dashboard")}
+                className="shrink-0"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              <h1 className="text-lg sm:text-xl font-bold">CV Preview</h1>
+            </div>
+          </div>
+        </div>
 
+        <main className="max-w-5xl mx-auto px-4 sm:px-6 py-12 text-center">
+          <div className="space-y-4">
+            <div className="w-20 h-20 mx-auto bg-red-100 dark:bg-red-950/20 rounded-full flex items-center justify-center">
+              {error === "CV not found" ? (
+                <FileX className="h-10 w-10 text-red-600 dark:text-red-400" />
+              ) : (
+                <AlertCircle className="h-10 w-10 text-red-600 dark:text-red-400" />
+              )}
+            </div>
+            <h2 className="text-xl font-semibold">{error}</h2>
+            <p className="text-muted-foreground">
+              {error === "CV not found" 
+                ? "This CV doesn't exist or has been deleted."
+                : "Please try again or contact support if the problem persists."}
+            </p>
+            <div className="flex gap-3 justify-center mt-6">
+              <Button 
+                variant="outline" 
+                onClick={() => router.push("/dashboard")}
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Dashboard
+              </Button>
+              {error !== "CV not found" && error !== "You don't have permission to view this CV" && (
+                <Button onClick={fetchCV}>
+                  Try Again
+                </Button>
+              )}
+            </div>
+          </div>
+        </main>
+      </div>
+    )
+  }
+
+  // No CV data state
   if (!cv) {
-    return null
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="border-b bg-card">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => router.push("/dashboard")}
+                className="shrink-0"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              <h1 className="text-lg sm:text-xl font-bold">CV Preview</h1>
+            </div>
+          </div>
+        </div>
+
+        <main className="max-w-5xl mx-auto px-4 sm:px-6 py-12 text-center">
+          <div className="space-y-4">
+            <div className="w-20 h-20 mx-auto bg-muted rounded-full flex items-center justify-center">
+              <FileX className="h-10 w-10 text-muted-foreground" />
+            </div>
+            <h2 className="text-xl font-semibold">No CV Data</h2>
+            <p className="text-muted-foreground">
+              Unable to load CV data.
+            </p>
+            <Button 
+              variant="outline" 
+              onClick={() => router.push("/dashboard")}
+              className="mt-6"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Dashboard
+            </Button>
+          </div>
+        </main>
+      </div>
+    )
   }
 
   return (
@@ -146,11 +266,11 @@ export default function CVPreviewPage() {
                 onClick={() => router.back()}
                 className="shrink-0"
               >
-                <ArrowLeft className="h-2 w-2" />
+                <ArrowLeft className="h-4 w-4" />
               </Button>
               <div className="min-w-0">
                 <h1 className="text-lg capitalize sm:text-xl lg:text-2xl font-bold truncate">
-                  {cv.title}
+                  {cv.title || "Untitled CV"}
                 </h1>
                 <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
                   Preview Mode
@@ -159,27 +279,26 @@ export default function CVPreviewPage() {
             </div>
 
             <div className="flex gap-2 shrink-0">
-    
               <Button 
                 variant="outline" 
                 size="sm"
                 onClick={handlePrint}
                 className="hidden lg:flex"
               >
-                <Printer className="h-2 w-2 mr-2" />
+                <Printer className="h-4 w-4 mr-2" />
                 Print
               </Button>
               
               <Link href={`/cv/${cvId}/edit`}>
                 <Button variant="outline" size="sm" className="hidden sm:flex">
-                  <Edit className="h-2 w-2 mr-2" />
+                  <Edit className="h-4 w-4 mr-2" />
                   Edit
                 </Button>
               </Link>
 
               <Link href={`/cv/${cvId}/edit`} className="sm:hidden">
                 <Button variant="outline" size="icon">
-                  <Edit className="h-2 w-2" />
+                  <Edit className="h-4 w-4" />
                 </Button>
               </Link>
 
@@ -206,9 +325,7 @@ export default function CVPreviewPage() {
 
         <div className="bg-white rounded-lg shadow-xl overflow-hidden">
           <div className="w-full mx-auto">
-            <div className="">
-              <CVPreview cv={cv} />
-            </div>
+            <CVPreview cv={cv} />
           </div>
         </div>
 
@@ -220,12 +337,12 @@ export default function CVPreviewPage() {
               onClick={handlePrint}
               className="flex-1"
             >
-              <Printer className="h-2 w-2 mr-2" />
+              <Printer className="h-4 w-4 mr-2" />
               Print
             </Button>
             <Link href={`/cv/${cvId}/edit`} className="flex-1">
               <Button variant="outline" size="sm" className="w-full">
-                <Edit className="h-2 w-2 mr-2" />
+                <Edit className="h-4 w-4 mr-2" />
                 Edit
               </Button>
             </Link>

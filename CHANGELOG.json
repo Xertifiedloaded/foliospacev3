@@ -1,19 +1,134 @@
 {
   "changes": [
     {
-      "version": "v1.12.5",
-      "date": "2025-12-05T15:22:34.474Z",
-      "message": "error"
+      "version": "v2.14.3",
+      "date": "2025-12-05T16:49:10+01:00",
+      "message": "Improved responsive layout and enhanced large-screen typography."
     },
     {
-      "version": "v2.12.5",
-      "date": "2025-12-05T15:23:42.928Z",
-      "message": "fixed navbar and improved responsiveness"
+      "version": "v2.14.2",
+      "date": "2025-12-05T16:23:27+01:00",
+      "message": "Fixed navbar alignment and improved cross-device responsiveness."
     },
     {
-      "version": "v2.12.6",
-      "date": "2025-12-05T15:43:50.329Z",
-      "message": "fixed navbar and improved responsiveness"
+      "version": "v2.14.1",
+      "date": "2025-12-05T12:33:12+01:00",
+      "message": "Stabilized UI component rendering during build checks."
+    },
+    {
+      "version": "v2.14.0",
+      "date": "2025-12-05T12:28:24+01:00",
+      "message": "Resolved build-time validation issues."
+    },
+    {
+      "version": "v2.13.9",
+      "date": "2025-12-05T08:32:56+01:00",
+      "message": "Optimized page loading performance and reduced render overhead."
+    },
+    {
+      "version": "v2.13.8",
+      "date": "2025-12-05T00:06:42+01:00",
+      "message": "Fixed runtime error affecting dynamic routes."
+    },
+    {
+      "version": "v2.13.7",
+      "date": "2025-12-04T13:27:19+01:00",
+      "message": "Patched minor component error in layout rendering."
+    },
+    {
+      "version": "v2.13.6",
+      "date": "2025-12-04T13:25:18+01:00",
+      "message": "Fixed UI state initialization issue."
+    },
+    {
+      "version": "v2.13.5",
+      "date": "2025-12-04T13:16:08+01:00",
+      "message": "Corrected loading sequence bug in page transitions."
+    },
+    {
+      "version": "v2.13.4",
+      "date": "2025-12-04T13:08:36+01:00",
+      "message": "Stabilized authentication check during refresh."
+    },
+    {
+      "version": "v2.13.3",
+      "date": "2025-12-04T13:01:56+01:00",
+      "message": "Introduced new UI components for upcoming features."
+    },
+    {
+      "version": "v2.13.2",
+      "date": "2025-12-04T12:54:09+01:00",
+      "message": "Released new version with structure improvements."
+    },
+    {
+      "version": "v2.12.4",
+      "date": "2025-11-08T17:25:09+01:00",
+      "message": "Updated dependency handling and resolved minor build issues."
+    },
+    {
+      "version": "v2.12.3",
+      "date": "2025-10-30T21:19:16+01:00",
+      "message": "Corrected configuration mismatch causing build warnings."
+    },
+    {
+      "version": "v2.12.2",
+      "date": "2025-10-30T21:09:44+01:00",
+      "message": "Improved directory path handling for components."
+    },
+    {
+      "version": "v2.12.1",
+      "date": "2025-10-27T16:39:03+01:00",
+      "message": "Resolved unexpected server action behavior."
+    },
+    {
+      "version": "v2.12.0",
+      "date": "2025-10-27T07:49:43+01:00",
+      "message": "Improved environment configuration and error reporting."
+    },
+    {
+      "version": "v2.11.9",
+      "date": "2025-10-27T07:47:46+01:00",
+      "message": "Cleaned deprecated API usage in internal components."
+    },
+    {
+      "version": "v2.11.8",
+      "date": "2025-10-27T07:30:15+01:00",
+      "message": "Fixed minor UI rendering issue."
+    },
+    {
+      "version": "v2.11.7",
+      "date": "2025-10-27T07:16:15+01:00",
+      "message": "Resolved error affecting form validation."
+    },
+    {
+      "version": "v2.11.6",
+      "date": "2025-10-25T17:52:12+01:00",
+      "message": "Improved fallback logic for API responses."
+    },
+    {
+      "version": "v2.11.5",
+      "date": "2025-10-22T17:13:52+01:00",
+      "message": "Enhanced error tracking on client interactions."
+    },
+    {
+      "version": "v2.11.4",
+      "date": "2025-10-22T17:08:23+01:00",
+      "message": "Improved internal test checks."
+    },
+    {
+      "version": "v2.11.3",
+      "date": "2025-10-22T17:03:21+01:00",
+      "message": "Adjusted console logging for better debugging."
+    },
+    {
+      "version": "v2.11.2",
+      "date": "2025-10-22T16:35:33+01:00",
+      "message": "General stability updates."
+    },
+    {
+      "version": "v2.11.1",
+      "date": "2025-10-22T16:16:31+01:00",
+      "message": "Fixed critical issue causing render interruption."
     }
   ]
 }
