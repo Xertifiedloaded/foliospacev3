@@ -25,6 +25,40 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
+    const userDetails = await prisma.user.findUnique({
+      where: { id: user.userId },
+      select: {
+        subscriptionTier: true,
+        templatesLimit: true,
+      },
+    })
+
+    if (!userDetails) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 })
+    }
+
+    const userCVs = await prisma.cV.findMany({
+      where: { userId: user.userId },
+      orderBy: { createdAt: 'asc' },
+      select: { id: true },
+    })
+
+    const cvIndex = userCVs.findIndex((c) => c.id === cv.id)
+    if (userDetails.subscriptionTier === 'FREE') {
+      if (cvIndex >= userDetails.templatesLimit) {
+        return NextResponse.json(
+          {
+            error: "Upgrade to Premium",
+            message: `You can only download ${userDetails.templatesLimit} CVs on the free plan. Upgrade to Premium to download unlimited CVs.`,
+            cvNumber: cvIndex + 1,
+            allowedCVs: userDetails.templatesLimit,
+            upgradeRequired: true,
+          },
+          { status: 403 }
+        )
+      }
+    }
+
     const doc = new jsPDF({
       format: "a4",
       unit: "mm",
@@ -74,7 +108,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const contentWidth = pageWidth - 2 * horizontalMargin
     let yPosition = verticalMargin
 
-
     const primaryColor = "#2C5282"
     const secondaryColor = "#4A5568"
     const accentColor = "#3182CE"
@@ -103,7 +136,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       yPosition += 8
     }
 
-    // HEADER - Name and Contact Info
     if (personalInfo.fullName) {
       doc.setFontSize(24)
       doc.setFont("helvetica", "bold")
@@ -144,7 +176,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       yPosition += 3
     }
 
-    // PROFESSIONAL SUMMARY
     if (personalInfo.summary) {
       addSection("Professional Summary")
       doc.setFontSize(10)
@@ -159,7 +190,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       yPosition += 2
     }
 
-    // PROFESSIONAL EXPERIENCE
     if (sortedExperiences.length > 0) {
       addSection("Professional Experience")
       sortedExperiences.forEach((exp: any, idx: number) => {
@@ -217,7 +247,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       yPosition += 2
     }
 
-    // EDUCATION
     if (sortedEducations.length > 0) {
       addSection("Education")
       sortedEducations.forEach((edu: any, idx: number) => {
@@ -257,7 +286,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       yPosition += 2
     }
 
-    // SKILLS
     if (skills.length > 0) {
       addSection("Skills")
       
