@@ -46,7 +46,7 @@ export function AuthForm({ mode }: AuthFormProps) {
     } finally {
       setLoading(false)
     }
-  }
+  };
 
   return (
     <Card className="w-full max-w-md p-8">
