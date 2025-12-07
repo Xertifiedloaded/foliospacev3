@@ -7,93 +7,77 @@ interface User {
   name: string
   email: string
   username: string
+  subscriptionTier: "FREE" | "PREMIUM"
+  subscriptionStatus: "ACTIVE" | "CANCELED" | "EXPIRED" | "TRIAL"
+  billingCycle?: "MONTHLY" | "YEARLY" | null
+  subscriptionEndDate?: string | null
+  templatesLimit: number
+  templatesUsed: number
 }
 
-interface UseAuthReturn {
-  user: User | null
-  loading: boolean
-  login: (email: string, password: string) => Promise<void>
-  signup: (name: string, email: string, password: string, username: string) => Promise<void>
-  logout: () => Promise<void>
-}
-
-export function useAuth(): UseAuthReturn {
+export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
+  const refreshUser = useCallback(async () => {
+    try {
+      const response = await fetch("/api/auth/me")
+      console.log("[Auth] Response status:", response.status)
+      
+      if (response.ok) {
+        const userData = await response.json()
+      
+        console.log("[Auth] Raw API response:", userData)
+        
+        const processedUser = {
+          id: userData.userId || userData.id,
+          name: userData.name || userData.username,
+          email: userData.email,
+          username: userData.username,
+          subscriptionTier: userData.subscriptionTier || "FREE",
+          subscriptionStatus: userData.subscriptionStatus || "ACTIVE",
+          billingCycle: userData.billingCycle || null,
+          subscriptionEndDate: userData.subscriptionEndDate || null,
+          templatesLimit: userData.templatesLimit || 3,
+          templatesUsed: userData.templatesUsed || 0,
+        }
+        
+        console.log("[Auth] Processed user:", processedUser)
+        console.log("[Auth] Is Premium?:", processedUser.subscriptionTier === "PREMIUM")
+        
+        setUser(processedUser)
+      } else {
+        console.log("[Auth] Auth check failed")
+        setUser(null)
+      }
+    } catch (error) {
+      console.error("[Auth] Check failed:", error)
+      setUser(null)
+    }
+  }, [])
+
   useEffect(() => {
     const checkAuth = async () => {
-      try {
-        const response = await fetch("/api/auth/me")
-        if (response.ok) {
-          const userData = await response.json()
-          console.log("[v0] Auth response:", userData)
-          setUser({
-            id: userData.userId || userData.id,
-            name: userData.name || userData.username, 
-            email: userData.email,
-            username: userData.username,
-          })
-        } else {
-          console.log("[v0] Auth check failed with status:", response.status)
-        }
-      } catch (error) {
-        console.error("Auth check failed:", error)
-      } finally {
-        setLoading(false)
-      }
+      setLoading(true)
+      await refreshUser()
+      setLoading(false)
     }
-
     checkAuth()
-  }, [])
+  }, [refreshUser])
 
-  const login = useCallback(async (email: string, password: string) => {
-    const response = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-      credentials: "include",
-    })
+  const isPremium = user?.subscriptionTier === "PREMIUM"
+  
+  useEffect(() => {
+    console.log("[Auth] isPremium updated:", isPremium, "for user:", user?.email)
+  }, [isPremium, user?.email])
 
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || "Login failed")
-    }
+  const canCreateTemplate = user ? user.templatesUsed < user.templatesLimit : false
 
-    const userData = await response.json()
-    console.log("[v0] Login response:", userData)
-    setUser({
-      id: userData.userId || userData.id,
-      name: userData.name || userData.username,
-      email: userData.email,
-      username: userData.username,
-    })
-  }, [])
-
-  const signup = useCallback(async (name: string, email: string, password: string, username: string) => {
-    const response = await fetch("/api/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password, username }),
-      credentials: "include",
-    })
-
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || "Signup failed")
-    }
-
-    const userData = await response.json()
-    setUser(userData)
-  }, [])
-
-  const logout = useCallback(async () => {
-    await fetch("/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    })
-    setUser(null)
-  }, [])
-
-  return { user, loading, login, signup, logout }
+  return { 
+    user, 
+    loading, 
+    isPremium,
+    canCreateTemplate,
+    refreshUser,
+  }
 }

@@ -1,91 +1,147 @@
-const { MongoClient, ObjectId } = require("mongodb");
 
-const OLD_DB_URI = "mongodb+srv://certifiedloaded:KhsBpLQcK31murUr@checkin.r5ib3.mongodb.net";
-const NEW_DB_URI = "mongodb+srv://certifiedloaded:KhsBpLQcK31murUr@checkin.r5ib3.mongodb.net";
+const { PrismaClient } = require("@prisma/client")
 
-const OLD_DB_NAME = "creatify";
-const NEW_DB_NAME = "foliocv";
+const prisma = new PrismaClient()
 
-const OLD_PROJECTS_COLLECTION = "Project";
+async function migrateSubscriptions() {
+  console.log("🚀 Starting subscription migration...\n")
 
-async function migrateProjects() {
-  const oldClient = new MongoClient(OLD_DB_URI);
-  const newClient = new MongoClient(NEW_DB_URI);
+  const stats = {
+    totalPremiumUsers: 0,
+    usersWithSubscription: 0,
+    usersWithoutSubscription: 0,
+    created: 0,
+    failed: 0,
+    errors: [],
+  }
 
   try {
-    await oldClient.connect();
-    await newClient.connect();
+    const premiumUsers = await prisma.user.findMany({
+      where: {
+        subscriptionTier: "PREMIUM",
+      },
+      include: {
+        subscription: true,
+        payments: {
+          where: {
+            status: "COMPLETED",
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: 1,
+        },
+      },
+    })
 
-    const oldDB = oldClient.db(OLD_DB_NAME);
-    const newDB = newClient.db(NEW_DB_NAME);
+    stats.totalPremiumUsers = premiumUsers.length
+    console.log(`📊 Found ${stats.totalPremiumUsers} PREMIUM users\n`)
+    const usersNeedingSubscription = premiumUsers.filter(
+      (user) => !user.subscription
+    )
 
-    console.log("Connected to both databases…");
+    stats.usersWithSubscription = premiumUsers.length - usersNeedingSubscription.length
+    stats.usersWithoutSubscription = usersNeedingSubscription.length
 
-    const oldProjects = await oldDB.collection(OLD_PROJECTS_COLLECTION).find().toArray();
-    console.log(`Found ${oldProjects.length} old projects.`);
+    console.log(`✅ Users with subscription: ${stats.usersWithSubscription}`)
+    console.log(`❌ Users without subscription: ${stats.usersWithoutSubscription}\n`)
 
-    for (const p of oldProjects) {
-      if (!p.userId) {
-        console.log(`❗ Project ${p._id} missing userId`);
-        continue;
-      }
-
-      // 1️⃣ Find old user
-      const oldUser = await oldDB.collection("User").findOne({ _id: new ObjectId(p.userId) });
-
-      if (!oldUser) {
-        console.log(`❗ No OLD USER found for project: ${p._id}`);
-        continue;
-      }
-
-      // 2️⃣ Match new user via email OR username
-      const newUser = await newDB.collection("User").findOne({
-        $or: [
-          { email: oldUser.email },
-          { username: oldUser.username }
-        ]
-      });
-
-      if (!newUser) {
-        console.log(`❗ No NEW USER found for email/username of ${oldUser.email}`);
-        continue;
-      }
-
-      // 3️⃣ Find CV of the matched user
-      const cv = await newDB.collection("CV").findOne({ userId: newUser._id });
-
-      if (!cv) {
-        console.log(`❗ No CV for NEW USER: ${newUser._id} (${newUser.email})`);
-        continue;
-      }
-
-      // 4️⃣ Build project object for the new schema
-      const projectObj = {
-        id: p._id.toString(),
-        name: p.title || p.name || "",
-        description: p.description || "",
-        url: p.link || p.url || "",
-        technologies: p.technologies || [],
-        createdAt: p.createdAt || new Date(),
-      };
-
-      // 5️⃣ Push project into CV.projects
-      await newDB.collection("CV").updateOne(
-        { _id: cv._id },
-        { $push: { projects: projectObj } }
-      );
-
-      console.log(`✓ Project ${p._id} added to CV for user ${newUser.username}`);
+    if (usersNeedingSubscription.length === 0) {
+      console.log("✨ All PREMIUM users already have subscription records!")
+      return stats
     }
 
-    console.log("\n🎉 Projects successfully migrated!");
+    console.log("🔄 Creating subscription records...\n")
 
-  } catch (err) {
-    console.error("Migration failed:", err);
+    for (const user of usersNeedingSubscription) {
+      try {
+        console.log(`Processing user: ${user.email} (${user.id})`)
+        const now = new Date()
+        let startDate = user.subscriptionStartDate || now
+        let endDate = user.subscriptionEndDate || new Date(now)
+        if (!user.subscriptionEndDate && user.billingCycle) {
+          if (user.billingCycle === "MONTHLY") {
+            endDate.setMonth(endDate.getMonth() + 1)
+          } else if (user.billingCycle === "YEARLY") {
+            endDate.setFullYear(endDate.getFullYear() + 1)
+          }
+        }
+        const lastPayment = user.payments[0]
+        const paystackData = lastPayment
+          ? {
+              paystackAuthorizationCode: lastPayment.paystackAuthorizationCode,
+            }
+          : {}
+
+        const subscription = await prisma.subscription.create({
+          data: {
+            userId: user.id,
+            tier: "PREMIUM",
+            status: user.subscriptionStatus || "ACTIVE",
+            billingCycle: user.billingCycle,
+            paystackSubscriptionCode: paystackData.paystackAuthorizationCode || null,
+            currentPeriodStart: startDate,
+            currentPeriodEnd: endDate,
+            cancelAtPeriodEnd: false,
+          },
+        })
+
+        console.log(`  ✅ Created subscription: ${subscription.id}`)
+        console.log(`     Start: ${startDate.toISOString()}`)
+        console.log(`     End: ${endDate.toISOString()}`)
+        console.log(`     Billing: ${user.billingCycle || "N/A"}\n`)
+
+        stats.created++
+      } catch (error) {
+        console.error(`  ❌ Failed for user ${user.email}:`, error.message)
+        stats.failed++
+        stats.errors.push({
+          userId: user.id,
+          email: user.email,
+          error: error.message,
+        })
+      }
+    }
+
+    // 4. Print summary
+    console.log("\n" + "=".repeat(60))
+    console.log("📋 MIGRATION SUMMARY")
+    console.log("=".repeat(60))
+    console.log(`Total PREMIUM users:           ${stats.totalPremiumUsers}`)
+    console.log(`Users with subscription:       ${stats.usersWithSubscription}`)
+    console.log(`Users needing subscription:    ${stats.usersWithoutSubscription}`)
+    console.log(`Subscriptions created:         ${stats.created}`)
+    console.log(`Failed:                        ${stats.failed}`)
+    console.log("=".repeat(60))
+
+    if (stats.errors.length > 0) {
+      console.log("\n❌ ERRORS:")
+      stats.errors.forEach((err, index) => {
+        console.log(`${index + 1}. User: ${err.email} (${err.userId})`)
+        console.log(`   Error: ${err.error}\n`)
+      })
+    }
+
+    return stats
+  } catch (error) {
+    console.error("\n💥 Fatal error during migration:", error)
+    throw error
   } finally {
-    await oldClient.close();
-    await newClient.close();
+    await prisma.$disconnect()
   }
 }
 
-migrateProjects();
+
+if (require.main === module) {
+  migrateSubscriptions()
+    .then((stats) => {
+      console.log("\n✨ Migration completed successfully!")
+      process.exit(0)
+    })
+    .catch((error) => {
+      console.error("\n💥 Migration failed:", error)
+      process.exit(1)
+    })
+}
+
+module.exports = { migrateSubscriptions }
