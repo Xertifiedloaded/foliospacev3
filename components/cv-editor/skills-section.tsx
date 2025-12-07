@@ -30,7 +30,7 @@ export function SkillsSection({ data, onChange }: SkillsSectionProps) {
   }
 
   return (
-    <Card className="p-6">
+    <Card className="p-2 lg:p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">Skills</h2>
         <Button onClick={addSkill} size="sm" variant="outline">

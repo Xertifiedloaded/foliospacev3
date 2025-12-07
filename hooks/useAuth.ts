@@ -26,8 +26,7 @@ export function useAuth() {
       
       if (response.ok) {
         const userData = await response.json()
-      
-        console.log("[Auth] Raw API response:", userData)
+    
         
         const processedUser = {
           id: userData.userId || userData.id,
@@ -41,9 +40,7 @@ export function useAuth() {
           templatesLimit: userData.templatesLimit || 3,
           templatesUsed: userData.templatesUsed || 0,
         }
-        
-        console.log("[Auth] Processed user:", processedUser)
-        console.log("[Auth] Is Premium?:", processedUser.subscriptionTier === "PREMIUM")
+
         
         setUser(processedUser)
       } else {

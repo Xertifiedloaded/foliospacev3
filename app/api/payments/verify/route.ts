@@ -1,10 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getAuthUser } from "@/lib/auth-middleware"
-
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY
-
-// Type definitions for Paystack response
 interface PaystackTransaction {
   id: number
   status: string

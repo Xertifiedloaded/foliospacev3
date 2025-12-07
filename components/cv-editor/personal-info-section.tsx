@@ -16,7 +16,7 @@ export function PersonalInfoSection({ data, onChange }: PersonalInfoSectionProps
   }
 
   return (
-    <Card className="p-6">
+    <Card className="p-2 lg:p-6">
       <h2 className="text-xl font-semibold mb-4">Personal Information</h2>
 
       <div className="grid gap-4">

@@ -41,7 +41,7 @@ export function EducationSection({ data, onChange }: EducationSectionProps) {
   }
 
   return (
-    <Card className="p-6">
+    <Card className="p-2 lg:p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">Education</h2>
         <Button onClick={addEducation} size="sm" variant="outline">

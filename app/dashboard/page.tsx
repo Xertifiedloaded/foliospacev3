@@ -7,7 +7,7 @@ import { DashboardHeader } from "@/components/dashboard-header"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent } from "@/components/ui/card"
-import { Plus, Clock, Download ,Crown, BadgeCheck, CreditCard, CalendarClock, Layers, FileText} from "lucide-react"
+import { Plus, Clock, Download, Crown, BadgeCheck, CreditCard, CalendarClock, Layers, FileText } from "lucide-react"
 import { CVCard } from "@/components/cv/cv-card"
 
 interface CV {
@@ -166,94 +166,90 @@ export default function DashboardPage() {
       <DashboardHeader />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
 
-  <Card>
-    <CardContent className="p-3">
-      <div className="flex items-center gap-3">
-        <Crown className="h-4 w-4 text-primary" />
-        <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">Tier</p>
-          <p className="text-sm font-bold">{user.subscriptionTier}</p>
+          <Card>
+            <CardContent className="p-3">
+              <div className="flex items-center gap-3">
+                <Crown className="h-4 w-4 text-primary" />
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Tier</p>
+                  <p className="text-sm font-bold">{user.subscriptionTier}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-3">
+              <div className="flex items-center gap-3">
+                <BadgeCheck className="h-4 w-4 text-primary" />
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Status</p>
+                  <p className="text-sm font-bold">{user.subscriptionStatus}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-3">
+              <div className="flex items-center gap-3">
+                <CreditCard className="h-4 w-4 text-primary" />
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Billing</p>
+                  <p className="text-sm font-bold">{user.billingCycle || "N/A"}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-3">
+              <div className="flex items-center gap-3">
+                <CalendarClock className="h-4 w-4 text-primary" />
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Expires</p>
+                  <p className="text-sm font-bold">
+                    {user.subscriptionEndDate
+                      ? new Date(user.subscriptionEndDate).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })
+                      : "N/A"}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-3">
+              <div className="flex items-center gap-3">
+                <Layers className="h-4 w-4 text-primary" />
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Templates</p>
+                  <p className="text-sm font-bold">
+                    {user.templatesUsed}/{user.templatesLimit}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-3">
+              <div className="flex items-center gap-3">
+                <FileText className="h-4 w-4 text-primary" />
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Total CVs</p>
+                  <p className="text-sm font-bold">{cvs.length}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
         </div>
-      </div>
-    </CardContent>
-  </Card>
-
-  <Card>
-    <CardContent className="p-3">
-      <div className="flex items-center gap-3">
-        <BadgeCheck className="h-4 w-4 text-primary" />
-        <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">Status</p>
-          <p className="text-sm font-bold">{user.subscriptionStatus}</p>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-
-  <Card>
-    <CardContent className="p-3">
-      <div className="flex items-center gap-3">
-        <CreditCard className="h-4 w-4 text-primary" />
-        <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">Billing</p>
-          <p className="text-sm font-bold">{user.billingCycle || "N/A"}</p>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-
-  <Card>
-    <CardContent className="p-3">
-      <div className="flex items-center gap-3">
-        <CalendarClock className="h-4 w-4 text-primary" />
-        <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">Expires</p>
-          <p className="text-sm font-bold">
-            {user.subscriptionEndDate
-              ? new Date(user.subscriptionEndDate).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                })
-              : "N/A"}
-          </p>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-
-  <Card>
-    <CardContent className="p-3">
-      <div className="flex items-center gap-3">
-        <Layers className="h-4 w-4 text-primary" />
-        <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">Templates</p>
-          <p className="text-sm font-bold">
-            {user.templatesUsed}/{user.templatesLimit}
-          </p>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-
-  <Card>
-    <CardContent className="p-3">
-      <div className="flex items-center gap-3">
-        <FileText className="h-4 w-4 text-primary" />
-        <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">Total CVs</p>
-          <p className="text-sm font-bold">{cvs.length}</p>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-
-</div>
-
-
-
-
 
         <div className="mb-8 space-y-4">
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">

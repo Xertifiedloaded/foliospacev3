@@ -45,7 +45,7 @@ export function ExperienceSection({ data, onChange }: ExperienceSectionProps) {
   }
 
   return (
-    <Card className="p-6">
+    <Card className="p-2 lg:p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">Experience</h2>
         <Button onClick={addExperience} size="sm" variant="outline">

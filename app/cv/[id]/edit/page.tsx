@@ -111,7 +111,7 @@ export default function CVEditorPage() {
         </div>
       </div>
 
-      <main className="max-w-4xl mx-auto px-6 py-8">
+      <main className="max-w-5xl mx-auto lg:px-6 py-8">
         <div className="space-y-8">
           <PersonalInfoSection data={cv.personalInfo} onChange={(data) => setCV({ ...cv, personalInfo: data })} />
 
