@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { CVPreview } from "@/components/cv-preview"
 import type { CVData } from "@/lib/types"
-import { Download, ArrowLeft, Edit, Printer, AlertCircle, FileX } from "lucide-react"
+import { Download, ArrowLeft, Edit, Printer, AlertCircle, FileX, FileEdit } from "lucide-react"
 import Link from "next/link"
 
 export default function CVPreviewPage() {
@@ -122,7 +122,21 @@ export default function CVPreviewPage() {
     }
   }
 
-  // Loading state
+  const isEmptyCV = (cvData: CVData) => {
+    const hasPersonalInfo = cvData.personalInfo && (
+      cvData.personalInfo.fullName?.trim() ||
+      cvData.personalInfo.email?.trim() ||
+      cvData.personalInfo.phone?.trim()
+    )
+    const hasContent = (
+      (cvData.educations && cvData.educations.length > 0) ||
+      (cvData.experiences && cvData.experiences.length > 0) ||
+      (cvData.skills && cvData.skills.length > 0) ||
+      (cvData.projects && cvData.projects.length > 0)
+    )
+    return !hasPersonalInfo && !hasContent
+  }
+
   if (loading || authLoading) {
     return (
       <div className="min-h-screen bg-background">
@@ -157,6 +171,7 @@ export default function CVPreviewPage() {
       </div>
     )
   }
+  
   if (error) {
     return (
       <div className="min-h-screen bg-background">
@@ -211,7 +226,6 @@ export default function CVPreviewPage() {
     )
   }
 
-  // No CV data state
   if (!cv) {
     return (
       <div className="min-h-screen bg-background">
@@ -248,6 +262,89 @@ export default function CVPreviewPage() {
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Dashboard
             </Button>
+          </div>
+        </main>
+      </div>
+    )
+  }
+
+  if (isEmptyCV(cv)) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="border-b bg-card sticky top-0 z-10 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => router.back()}
+                  className="shrink-0"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+                <div className="min-w-0">
+                  <h1 className="text-lg capitalize sm:text-xl lg:text-2xl font-bold truncate">
+                    {cv.title || "Untitled CV"}
+                  </h1>
+                  <p className="text-xs sm:text-sm text-muted-foreground hidden sm:block">
+                    Preview Mode
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <main className="max-w-5xl mx-auto px-4 sm:px-6 py-12 text-center">
+          <div className="space-y-6">
+            <div className="w-24 h-24 mx-auto bg-blue-100 dark:bg-blue-950/20 rounded-full flex items-center justify-center">
+              <FileEdit className="h-12 w-12 text-blue-600 dark:text-blue-400" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold">Nothing to Preview Yet</h2>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                Your CV is empty. Start by adding your personal information, education, work experience, and skills to create a professional CV.
+              </p>
+            </div>
+            
+            <div className="bg-muted/50 rounded-lg p-6 max-w-md mx-auto">
+              <h3 className="font-semibold mb-3 text-left">Get started by adding:</h3>
+              <ul className="text-sm text-muted-foreground space-y-2 text-left">
+                <li className="flex items-start gap-2">
+                  <span className="text-primary">•</span>
+                  <span>Personal information (name, email, phone)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary">•</span>
+                  <span>Education background</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary">•</span>
+                  <span>Work experience</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary">•</span>
+                  <span>Skills and projects</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-center mt-8">
+              <Button 
+                variant="outline" 
+                onClick={() => router.push("/dashboard")}
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Dashboard
+              </Button>
+              <Link href={`/cv/${cvId}/edit`}>
+                <Button className="w-full sm:w-auto">
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit Your CV
+                </Button>
+              </Link>
+            </div>
           </div>
         </main>
       </div>

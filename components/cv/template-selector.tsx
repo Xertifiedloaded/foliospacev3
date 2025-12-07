@@ -174,7 +174,6 @@ function TemplateCard({ template, isSelected, canSelect, isPremiumUser, onSelect
         disabled && "opacity-50",
       )}
     >
-      {/* Color Preview */}
       <div className="flex gap-1 mb-3">
         <div className="w-6 h-6 rounded-full" style={{ backgroundColor: template.style.primaryColor }} />
         <div className="w-6 h-6 rounded-full" style={{ backgroundColor: template.style.secondaryColor }} />
