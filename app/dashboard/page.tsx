@@ -4,14 +4,11 @@ import { useEffect, useState } from "react"
 import { useAuth } from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
 import { DashboardHeader } from "@/components/dashboard-header"
-
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent } from "@/components/ui/card"
-import { Plus, FileText, Clock, Download } from "lucide-react"
+import { Plus, Clock, Download ,Crown, BadgeCheck, CreditCard, CalendarClock, Layers, FileText} from "lucide-react"
 import { CVCard } from "@/components/cv/cv-card"
-
-
 
 interface CV {
   id: string
@@ -169,56 +166,94 @@ export default function DashboardPage() {
       <DashboardHeader />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <FileText className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Total CVs</p>
-                  <p className="text-2xl font-bold">{cvs.length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-500/10 rounded-lg">
-                  <Clock className="h-5 w-5 text-blue-500" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Last Updated</p>
-                  <p className="text-2xl font-bold">
-                    {cvs.length > 0
-                      ? new Date(cvs[0].updatedAt).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                        })
-                      : "-"}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-500/10 rounded-lg">
-                  <Download className="h-5 w-5 text-green-500" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Ready to Export</p>
-                  <p className="text-2xl font-bold">{cvs.length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+  <Card>
+    <CardContent className="p-3">
+      <div className="flex items-center gap-3">
+        <Crown className="h-4 w-4 text-primary" />
+        <div className="space-y-1">
+          <p className="text-xs text-muted-foreground">Tier</p>
+          <p className="text-sm font-bold">{user.subscriptionTier}</p>
         </div>
+      </div>
+    </CardContent>
+  </Card>
+
+  <Card>
+    <CardContent className="p-3">
+      <div className="flex items-center gap-3">
+        <BadgeCheck className="h-4 w-4 text-primary" />
+        <div className="space-y-1">
+          <p className="text-xs text-muted-foreground">Status</p>
+          <p className="text-sm font-bold">{user.subscriptionStatus}</p>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+
+  <Card>
+    <CardContent className="p-3">
+      <div className="flex items-center gap-3">
+        <CreditCard className="h-4 w-4 text-primary" />
+        <div className="space-y-1">
+          <p className="text-xs text-muted-foreground">Billing</p>
+          <p className="text-sm font-bold">{user.billingCycle || "N/A"}</p>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+
+  <Card>
+    <CardContent className="p-3">
+      <div className="flex items-center gap-3">
+        <CalendarClock className="h-4 w-4 text-primary" />
+        <div className="space-y-1">
+          <p className="text-xs text-muted-foreground">Expires</p>
+          <p className="text-sm font-bold">
+            {user.subscriptionEndDate
+              ? new Date(user.subscriptionEndDate).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                })
+              : "N/A"}
+          </p>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+
+  <Card>
+    <CardContent className="p-3">
+      <div className="flex items-center gap-3">
+        <Layers className="h-4 w-4 text-primary" />
+        <div className="space-y-1">
+          <p className="text-xs text-muted-foreground">Templates</p>
+          <p className="text-sm font-bold">
+            {user.templatesUsed}/{user.templatesLimit}
+          </p>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+
+  <Card>
+    <CardContent className="p-3">
+      <div className="flex items-center gap-3">
+        <FileText className="h-4 w-4 text-primary" />
+        <div className="space-y-1">
+          <p className="text-xs text-muted-foreground">Total CVs</p>
+          <p className="text-sm font-bold">{cvs.length}</p>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+
+</div>
+
+
+
+
 
         <div className="mb-8 space-y-4">
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">

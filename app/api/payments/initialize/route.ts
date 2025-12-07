@@ -13,7 +13,6 @@ const PRICING = {
     planCode: process.env.PAYSTACK_YEARLY_PLAN_CODE,
   },
 }
-
 export async function POST(request: NextRequest) {
   try {
     const user = await getAuthUser()
