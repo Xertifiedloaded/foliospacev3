@@ -3,6 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { useAuth } from "@/hooks/useAuth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -69,6 +70,7 @@ export function AuthForm({ mode }: AuthFormProps) {
 
         {mode === "signup" && (
           <>
+
             <div className="space-y-2">
               <label className="text-sm font-medium">Full Name</label>
               <Input
@@ -80,11 +82,12 @@ export function AuthForm({ mode }: AuthFormProps) {
                 required
                 minLength={3}
                 maxLength={40}
-                pattern="^[A-Za-z][A-Za-z\s]*[A-Za-z]$"
+                pattern="^[A-Za-z][A-Za-z\\s]*[A-Za-z]$"
                 title="Name must contain letters only and cannot start or end with space."
               />
             </div>
 
+            {/* USERNAME */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Username</label>
               <Input
@@ -112,8 +115,8 @@ export function AuthForm({ mode }: AuthFormProps) {
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
             required
-            maxLength={100}
             pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+            title="Enter a valid email address."
             title="Enter a valid email address."
           />
         </div>
@@ -127,10 +130,9 @@ export function AuthForm({ mode }: AuthFormProps) {
             onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
             required
-            minLength={8}
             maxLength={64}
-            pattern="^(?=.*[A-Za-z])(?=.*\d).{8,}$"
-            title="Password must be at least 8 characters and contain at least one letter and one number."
+            pattern="^(?=.*[A-Za-z])(?=.*\d).{5,}$"
+            title="Password must contain at least one letter and one number."
           />
         </div>
 
@@ -138,6 +140,24 @@ export function AuthForm({ mode }: AuthFormProps) {
           {loading ? "Loading..." : mode === "login" ? "Sign In" : "Create Account"}
         </Button>
       </form>
+
+      <div className="text-center mt-4 text-sm">
+        {mode === "login" ? (
+          <p>
+            Don’t have an account?{" "}
+            <Link href="/signup" className="font-medium text-primary hover:underline">
+              Create one
+            </Link>
+          </p>
+        ) : (
+          <p>
+            Already have an account?{" "}
+            <Link href="/login" className="font-medium text-primary hover:underline">
+              Sign in
+            </Link>
+          </p>
+        )}
+      </div>
     </Card>
   )
 }
