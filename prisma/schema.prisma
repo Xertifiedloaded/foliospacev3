@@ -47,8 +47,6 @@ model User {
   subscriptionEndDate DateTime?
   templatesLimit   Int                @default(3) 
   templatesUsed    Int                @default(0)
-  
-  // Relations
   cvs              CV[]
   blogPosts        BlogPost[]
   payments         Payment[]
@@ -59,52 +57,36 @@ model Subscription {
   id                  String             @id @default(auto()) @map("_id") @db.ObjectId
   userId              String             @unique @db.ObjectId
   user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
   tier                SubscriptionTier   @default(FREE)
   status              SubscriptionStatus @default(ACTIVE)
-  billingCycle        BillingCycle?      // MONTHLY or YEARLY
-  
-  // Payment provider details (Paystack)
+  billingCycle        BillingCycle?      
   paystackCustomerCode String?           @unique
   paystackSubscriptionCode String?      @unique
-  paystackPlanCode    String?            // Paystack plan code (e.g., PLN_monthly, PLN_yearly)
-  
+  paystackPlanCode    String?            
   currentPeriodStart  DateTime?
   currentPeriodEnd    DateTime?
   cancelAtPeriodEnd   Boolean            @default(false)
-  
   createdAt           DateTime           @default(now())
   updatedAt           DateTime           @updatedAt
-  
   @@index([userId, status])
 }
-
 model Payment {
   id                String        @id @default(auto()) @map("_id") @db.ObjectId
   userId            String        @db.ObjectId
   user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
   amount            Float
   currency          String        @default("USD")
   status            PaymentStatus @default(PENDING)
-  
-  // Payment provider details (Paystack)
   paystackReference   String?       @unique
   paystackAccessCode  String?
   paystackAuthorizationCode String?
-  
-  // What was purchased
   subscriptionTier  SubscriptionTier
-  billingCycle      BillingCycle?      // MONTHLY or YEARLY
+  billingCycle      BillingCycle?     
   description       String?
-  
-  // Metadata
-  paymentMethod     String? // card, paypal, etc.
+  paymentMethod     String? 
   receiptUrl        String?
-  
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
-  
   @@index([userId, status])
   @@index([createdAt])
 }
@@ -199,3 +181,4 @@ model BlogLike {
   postId    String   @db.ObjectId
   @@unique([postId, ipAddress])
 }
+

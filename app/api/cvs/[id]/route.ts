@@ -24,19 +24,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
-    return NextResponse.json({
-      ...cv,
-      personalInfo: cv.personalInfo,
-      educations: cv.educations,
-      experiences: cv.experiences,
-      skills: cv.skills,
-      projects: cv.projects,
-    })
+    return NextResponse.json(cv)
   } catch (error) {
-    console.error("Get CV error:", error)
+    console.error("[CV] Error fetching CV:", error)
     return NextResponse.json({ error: "Failed to fetch CV" }, { status: 500 })
   }
 }
+
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getAuthUser()
@@ -46,9 +40,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     const { id } = await params
+    const body = await request.json()
 
     const cv = await prisma.cV.findUnique({
       where: { id },
+      select: { userId: true },
     })
 
     if (!cv) {
@@ -59,23 +55,22 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
-    const updateData = await request.json()
-
     const updatedCV = await prisma.cV.update({
       where: { id },
       data: {
-        ...(updateData.title && { title: updateData.title }),
-        ...(updateData.personalInfo && { personalInfo: updateData.personalInfo }),
-        ...(updateData.educations && { educations: updateData.educations }),
-        ...(updateData.experiences && { experiences: updateData.experiences }),
-        ...(updateData.skills && { skills: updateData.skills }),
-        ...(updateData.projects && { projects: updateData.projects }),
+        title: body.title,
+        personalInfo: body.personalInfo,
+        educations: body.educations,
+        experiences: body.experiences,
+        skills: body.skills,
+        projects: body.projects,
+        updatedAt: new Date(),
       },
     })
 
     return NextResponse.json(updatedCV)
   } catch (error) {
-    console.error("Update CV error:", error)
+    console.error("[CV] Error updating CV:", error)
     return NextResponse.json({ error: "Failed to update CV" }, { status: 500 })
   }
 }
@@ -92,6 +87,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
     const cv = await prisma.cV.findUnique({
       where: { id },
+      select: { userId: true },
     })
 
     if (!cv) {
@@ -106,9 +102,9 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       where: { id },
     })
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ message: "CV deleted successfully" })
   } catch (error) {
-    console.error("Delete CV error:", error)
+    console.error("[CV] Error deleting CV:", error)
     return NextResponse.json({ error: "Failed to delete CV" }, { status: 500 })
   }
 }

@@ -12,18 +12,12 @@ export async function GET() {
 
     const cvs = await prisma.cV.findMany({
       where: { userId: user.userId },
-      orderBy: { updatedAt: "desc" },
-      select: {
-        id: true,
-        title: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      orderBy: { createdAt: "desc" },
     })
 
     return NextResponse.json(cvs)
   } catch (error) {
-    console.error("Get CVs error:", error)
+    console.error("[CVs] Error fetching CVs:", error)
     return NextResponse.json({ error: "Failed to fetch CVs" }, { status: 500 })
   }
 }
@@ -36,27 +30,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { title } = await request.json()
-
-    if (!title) {
-      return NextResponse.json({ error: "Title is required" }, { status: 400 })
-    }
+    const body = await request.json()
 
     const cv = await prisma.cV.create({
       data: {
         userId: user.userId,
-        title,
-        personalInfo: {},
-        educations: [],
-        experiences: [],
-        skills: [],
-        projects: [],
+        title: body.title || "Untitled CV",
+        personalInfo: body.personalInfo || {},
+        educations: body.educations || [],
+        experiences: body.experiences || [],
+        skills: body.skills || [],
+        projects: body.projects || [],
       },
     })
 
     return NextResponse.json(cv, { status: 201 })
   } catch (error) {
-    console.error("Create CV error:", error)
+    console.error("[CVs] Error creating CV:", error)
     return NextResponse.json({ error: "Failed to create CV" }, { status: 500 })
   }
 }
