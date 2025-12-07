@@ -96,6 +96,7 @@ export function useAuth() {
 
       const data = await response.json()
       setUser(normalizeUser(data))
+      
     },
     []
   )
