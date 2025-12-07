@@ -3,8 +3,9 @@
 import { formatDistanceToNow } from "date-fns"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Edit, Eye, Copy, Download, Trash2, Globe2, Globe2Icon, Link2Icon, GlobeLockIcon } from "lucide-react"
+import { Edit, Eye, Copy, Download, Trash2, Globe2 } from "lucide-react"
 import Link from "next/link"
+import CVTemplateButton from "./cv-template-button"
 
 interface CVCardProps {
   id: string
@@ -28,22 +29,37 @@ export function CVCard({ id, title, updatedAt, onDuplicate, onDelete, onExport }
             <span className="hidden sm:inline">Updated {relativeTime}</span>
           </p>
         </div>
-
         <div className="flex items-center gap-1 sm:shrink-0">
           <Link href={`/cv/${id}/edit`}>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50" title="Edit">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+              title="Edit"
+            >
               <Edit className="h-4 w-4" />
             </Button>
           </Link>
+          <CVTemplateButton cvId={id} />
 
           <Link href={`/portfolio/${id}`}>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-purple-600 hover:text-purple-700 hover:bg-purple-50" title="Portfolio">
-              <Globe2 className=" duration-75" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+              title="Portfolio"
+            >
+              <Globe2 className="h-4 w-4" />
             </Button>
           </Link>
 
           <Link href={`/cv/${id}/preview`}>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50" title="Preview">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
+              title="Preview"
+            >
               <Eye className="h-4 w-4" />
             </Button>
           </Link>
@@ -56,16 +72,6 @@ export function CVCard({ id, title, updatedAt, onDuplicate, onDelete, onExport }
             title="Duplicate"
           >
             <Copy className="h-4 w-4" />
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-cyan-600 hover:text-cyan-700 hover:bg-cyan-50"
-            onClick={() => onExport(id)}
-            title="Export PDF"
-          >
-            <Download className="h-4 w-4" />
           </Button>
 
           <Button

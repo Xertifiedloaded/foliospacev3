@@ -4,11 +4,14 @@ import { useEffect, useState } from "react"
 import { useAuth } from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
 import { DashboardHeader } from "@/components/dashboard-header"
-import { CVCard } from "@/components/cv-card"
+
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent } from "@/components/ui/card"
 import { Plus, FileText, Clock, Download } from "lucide-react"
+import { CVCard } from "@/components/cv/cv-card"
+
+
 
 interface CV {
   id: string

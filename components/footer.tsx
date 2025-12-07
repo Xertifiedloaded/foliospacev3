@@ -1,68 +1,93 @@
 import Link from "next/link"
+import { FileText } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer className="border-t bg-card/50 mt-12">
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid md:grid-cols-4 gap-8 mb-8">
-          <div>
-            <h3 className="font-semibold mb-4">FolioSpace</h3>
-            <p className="text-sm text-muted-foreground">Create and manage multiple professional CVs with ease.</p>
+    <footer className="border-t border-border bg-background">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="col-span-2 md:col-span-1 space-y-4">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+                <FileText className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <span className="font-bold text-lg">FolioSpace</span>
+            </Link>
+            <p className="text-sm text-muted-foreground">Build professional resumes that get you hired.</p>
           </div>
-          <div>
-            <h3 className="font-semibold mb-4">Product</h3>
-            <ul className="space-y-2 text-sm">
+
+          <div className="space-y-4">
+            <h4 className="font-semibold text-sm">Product</h4>
+            <ul className="space-y-2">
               <li>
-                <Link href="/pricing" className="text-muted-foreground hover:text-foreground">
+                <Link
+                  href="#features"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Features
+                </Link>
+              </li>
+              <li>
+                <Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   Pricing
                 </Link>
               </li>
               <li>
-                <Link href="/changelog" className="text-muted-foreground hover:text-foreground">
-                  Updates
+                <Link
+                  href="/templates"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Templates
                 </Link>
               </li>
             </ul>
           </div>
-          <div>
-            <h3 className="font-semibold mb-4">Company</h3>
-            <ul className="space-y-2 text-sm">
+
+          <div className="space-y-4">
+            <h4 className="font-semibold text-sm">Company</h4>
+            <ul className="space-y-2">
               <li>
-                <Link href="/about" className="text-muted-foreground hover:text-foreground">
+                <Link href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   About
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="text-muted-foreground hover:text-foreground">
-                  Blog
+                <Link href="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Contact
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-muted-foreground hover:text-foreground">
-                  Contact
+                <Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Blog
                 </Link>
               </li>
             </ul>
           </div>
-          <div>
-            <h3 className="font-semibold mb-4">Legal</h3>
-            <ul className="space-y-2 text-sm">
+
+          <div className="space-y-4">
+            <h4 className="font-semibold text-sm">Legal</h4>
+            <ul className="space-y-2">
               <li>
-                <Link href="/privacy" className="text-muted-foreground hover:text-foreground">
-                  Privacy
+                <Link href="/changelog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Changelog
                 </Link>
               </li>
-  
               <li>
-                <Link href="/terms" className="text-muted-foreground hover:text-foreground">
-                  Terms
+                <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Terms of Service
                 </Link>
               </li>
             </ul>
           </div>
         </div>
-        <div className="border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} FolioSpace. All rights reserved.</p>
+
+        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} FolioSpace. All rights reserved.</p>
         </div>
       </div>
     </footer>
