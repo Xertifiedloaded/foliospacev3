@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/useAuth"
 import { FileText, Menu, X } from "lucide-react"
@@ -9,6 +10,7 @@ import { useState } from "react"
 export function Navbar() {
   const { user, logout } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const router = useRouter()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -29,25 +31,21 @@ export function Navbar() {
           </Link>
           {user ? (
             <>
-              <Link href="/dashboard">
-                <Button variant="ghost" size="sm">
-                  Dashboard
-                </Button>
-              </Link>
+              <Button variant="ghost" size="sm" onClick={() => router.push("/dashboard")}>
+                Dashboard
+              </Button>
               <Button variant="outline" size="sm" onClick={logout}>
                 Sign Out
               </Button>
             </>
           ) : (
             <>
-              <Link href="/login">
-                <Button variant="ghost" size="sm">
-                  Sign In
-                </Button>
-              </Link>
-              <Link href="/signup">
-                <Button size="sm">Get Started</Button>
-              </Link>
+              <Button variant="ghost" size="sm" onClick={() => router.push("/login")}>
+                Sign In
+              </Button>
+              <Button size="sm" onClick={() => router.push("/signup")}>
+                Get Started
+              </Button>
             </>
           )}
         </div>
@@ -74,27 +72,52 @@ export function Navbar() {
           </Link>
           {user ? (
             <>
-              <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="ghost" size="sm" className="w-full justify-start">
-                  Dashboard
-                </Button>
-              </Link>
-              <Button variant="outline" size="sm" className="w-full bg-transparent" onClick={logout}>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="w-full justify-start"
+                onClick={() => {
+                  setMobileMenuOpen(false)
+                  router.push("/dashboard")
+                }}
+              >
+                Dashboard
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full bg-transparent" 
+                onClick={() => {
+                  setMobileMenuOpen(false)
+                  logout()
+                }}
+              >
                 Sign Out
               </Button>
             </>
           ) : (
             <>
-              <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="ghost" size="sm" className="w-full justify-start">
-                  Sign In
-                </Button>
-              </Link>
-              <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
-                <Button size="sm" className="w-full">
-                  Get Started
-                </Button>
-              </Link>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="w-full justify-start"
+                onClick={() => {
+                  setMobileMenuOpen(false)
+                  router.push("/login")
+                }}
+              >
+                Sign In
+              </Button>
+              <Button 
+                size="sm" 
+                className="w-full"
+                onClick={() => {
+                  setMobileMenuOpen(false)
+                  router.push("/signup")
+                }}
+              >
+                Get Started
+              </Button>
             </>
           )}
         </div>
