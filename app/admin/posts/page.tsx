@@ -16,6 +16,8 @@ interface BlogPost {
   title: string
   slug: string
   excerpt?: string
+  content?: string
+  coverImage?: string
   isPublished: boolean
   publishedAt?: string
   tags: string[]
@@ -26,6 +28,12 @@ interface BlogPost {
     comments: number
     likes: number
   }
+  user?: {
+    id: string
+    name: string
+    username: string
+    email: string
+  }
 }
 
 export default function AdminPostsPage() {
@@ -35,10 +43,24 @@ export default function AdminPostsPage() {
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null)
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
+  const [currentUser, setCurrentUser] = useState<{ username: string } | null>(null)
 
   useEffect(() => {
     fetchPosts()
+    fetchCurrentUser()
   }, [page])
+
+  async function fetchCurrentUser() {
+    try {
+      const response = await fetch("/api/auth/me")
+      if (response.ok) {
+        const userData = await response.json()
+        setCurrentUser(userData)
+      }
+    } catch (error) {
+      console.error("Failed to fetch user:", error)
+    }
+  }
 
   async function fetchPosts() {
     setLoading(true)
@@ -54,13 +76,21 @@ export default function AdminPostsPage() {
     }
   }
 
-  async function handleSavePost(postData: any) {
+  async function handleSavePost(formData: FormData) {
     try {
-      const response = await fetch("/api/posts/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(postData),
-      })
+      let response
+
+      if (editingPost && currentUser) {
+        response = await fetch(`/api/posts/${currentUser.username}/${editingPost.slug}`, {
+          method: "PUT",
+          body: formData,
+        })
+      } else {
+        response = await fetch("/api/posts/create", {
+          method: "POST",
+          body: formData,
+        })
+      }
 
       if (!response.ok) throw new Error("Failed to save post")
 
@@ -75,14 +105,39 @@ export default function AdminPostsPage() {
   async function handleDeletePost(slug: string) {
     if (!confirm("Are you sure you want to delete this post?")) return
 
+    if (!currentUser) {
+      console.error("User not logged in")
+      return
+    }
+
     try {
-      const response = await fetch(`/api/posts/${slug}`, { method: "DELETE" })
+      const response = await fetch(`/api/posts/${currentUser.username}/${slug}`, { method: "DELETE" })
 
       if (!response.ok) throw new Error("Failed to delete post")
 
       fetchPosts()
     } catch (error) {
       console.error("Failed to delete post:", error)
+    }
+  }
+
+  async function handleEditPost(post: BlogPost) {
+    if (!currentUser) {
+      console.error("User not logged in")
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/posts/${currentUser.username}/${post.slug}`)
+      if (response.ok) {
+        const fullPost = await response.json()
+        setEditingPost(fullPost)
+        setShowEditor(true)
+      } else {
+        throw new Error("Failed to fetch post")
+      }
+    } catch (error) {
+      console.error("Failed to fetch post for editing:", error)
     }
   }
 
@@ -121,7 +176,6 @@ export default function AdminPostsPage() {
             </div>
           )}
 
-          {/* Posts Table */}
           {loading ? (
             <div className="flex justify-center py-12">
               <Spinner />
@@ -159,8 +213,8 @@ export default function AdminPostsPage() {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      {post.isPublished && (
-                        <Link href={`/blog/${post.slug}`} target="_blank">
+                      {currentUser && (
+                        <Link href={`/blog/${currentUser.username}/${post.slug}`} target="_blank">
                           <Button variant="outline" size="sm" className="gap-2 bg-transparent">
                             <Eye className="h-4 w-4" />
                             View
@@ -171,10 +225,7 @@ export default function AdminPostsPage() {
                         variant="outline"
                         size="sm"
                         className="gap-2 bg-transparent"
-                        onClick={() => {
-                          setEditingPost(post)
-                          setShowEditor(true)
-                        }}
+                        onClick={() => handleEditPost(post)}
                       >
                         <Edit className="h-4 w-4" />
                         Edit

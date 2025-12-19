@@ -1,5 +1,4 @@
 "use client"
-
 import { useEffect, useState } from "react"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
@@ -34,3 +33,4 @@ export default function BlogPage() {
     </div>
   )
 }
+

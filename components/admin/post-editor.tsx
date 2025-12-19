@@ -1,14 +1,14 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { X } from "lucide-react"
+import { X, Upload, ImageIcon } from "lucide-react"
+import Image from "next/image"
 
 interface PostEditorProps {
   initialData?: {
@@ -19,7 +19,7 @@ interface PostEditorProps {
     coverImage?: string
     isPublished: boolean
   }
-  onSave: (data: any) => Promise<void>
+  onSave: (data: FormData) => Promise<void>
   isLoading?: boolean
 }
 
@@ -27,11 +27,60 @@ export function PostEditor({ initialData, onSave, isLoading }: PostEditorProps) 
   const [title, setTitle] = useState(initialData?.title || "")
   const [excerpt, setExcerpt] = useState(initialData?.excerpt || "")
   const [content, setContent] = useState(initialData?.content || "")
-  const [coverImage, setCoverImage] = useState(initialData?.coverImage || "")
   const [isPublished, setIsPublished] = useState(initialData?.isPublished || false)
   const [tags, setTags] = useState<string[]>(initialData?.tags || [])
   const [tagInput, setTagInput] = useState("")
   const [error, setError] = useState("")
+
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null)
+  const [coverImagePreview, setCoverImagePreview] = useState<string>(initialData?.coverImage || "")
+  const [isDragging, setIsDragging] = useState(false)
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setError("Image must be less than 5MB")
+        return
+      }
+      if (!file.type.startsWith("image/")) {
+        setError("File must be an image")
+        return
+      }
+      setCoverImageFile(file)
+      setCoverImagePreview(URL.createObjectURL(file))
+      setError("")
+    }
+  }
+
+  function handleDragOver(e: React.DragEvent) {
+    e.preventDefault()
+    setIsDragging(true)
+  }
+
+  function handleDragLeave(e: React.DragEvent) {
+    e.preventDefault()
+    setIsDragging(false)
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault()
+    setIsDragging(false)
+    const file = e.dataTransfer.files?.[0]
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setError("Image must be less than 5MB")
+        return
+      }
+      if (!file.type.startsWith("image/")) {
+        setError("File must be an image")
+        return
+      }
+      setCoverImageFile(file)
+      setCoverImagePreview(URL.createObjectURL(file))
+      setError("")
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -43,14 +92,18 @@ export function PostEditor({ initialData, onSave, isLoading }: PostEditorProps) 
     }
 
     try {
-      await onSave({
-        title,
-        excerpt: excerpt || content.substring(0, 200),
-        content,
-        coverImage,
-        tags,
-        isPublished,
-      })
+      const formData = new FormData()
+      formData.append("title", title)
+      formData.append("excerpt", excerpt || content.substring(0, 200))
+      formData.append("content", content)
+      formData.append("tags", JSON.stringify(tags))
+      formData.append("isPublished", isPublished.toString())
+
+      if (coverImageFile) {
+        formData.append("coverImage", coverImageFile)
+      }
+
+      await onSave(formData)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save post")
     }
@@ -82,13 +135,58 @@ export function PostEditor({ initialData, onSave, isLoading }: PostEditorProps) 
         </div>
 
         <div>
-          <label className="text-sm font-medium">Cover Image URL</label>
-          <Input
-            value={coverImage}
-            onChange={(e) => setCoverImage(e.target.value)}
-            placeholder="https://example.com/image.jpg"
-            className="mt-1"
-          />
+          <label className="text-sm font-medium">Cover Image</label>
+          <div
+            className={`mt-1 border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+              isDragging ? "border-primary bg-primary/5" : "border-muted-foreground/25"
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            {coverImagePreview ? (
+              <div className="space-y-4">
+                <div className="relative w-full h-48 rounded-lg overflow-hidden">
+                  <Image
+                    src={coverImagePreview || "/placeholder.svg"}
+                    alt="Cover preview"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setCoverImageFile(null)
+                    setCoverImagePreview("")
+                  }}
+                >
+                  Remove Image
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <ImageIcon className="h-12 w-12 mx-auto text-muted-foreground" />
+                <p className="text-sm text-muted-foreground">Drag and drop an image here, or click to select</p>
+                <p className="text-xs text-muted-foreground">Max size: 5MB</p>
+              </div>
+            )}
+            <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" id="cover-image-input" />
+            {!coverImagePreview && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="mt-4 bg-transparent"
+                onClick={() => document.getElementById("cover-image-input")?.click()}
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                Choose File
+              </Button>
+            )}
+          </div>
         </div>
 
         <div>

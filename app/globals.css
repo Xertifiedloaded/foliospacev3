@@ -154,3 +154,25 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+
+      .drop-cap::first-letter {
+            font-size: 4em;
+            font-weight: bold;
+            float: left;
+            line-height: 0.8;
+            margin-right: 8px;
+            margin-top: 7px;
+            color: #333;
+        }
+
+        .fancy-drop::first-letter {
+            font-size: 5em;
+            font-weight: bold;
+            float: left;
+            line-height: 0.65;
+            margin-right: 10px;
+            margin-top: 10px;
+            color: #c41e3a;
+            font-family: 'Times New Roman', serif;
+        }

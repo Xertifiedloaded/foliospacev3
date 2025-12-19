@@ -1,6 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getAuthUser } from "@/lib/auth-middleware"
+import cloudinary from "@/lib/cloudinary"
+import sharp from "sharp"
 
 type RouteParams = Promise<{ slug: string[] }>
 
@@ -19,6 +21,22 @@ function calculateReadTime(content: string): number {
 
 function normalizeUsername(username: string): string {
   return username.toLowerCase()
+}
+
+async function compressImage(file: File): Promise<Buffer> {
+  const bytes = await file.arrayBuffer()
+  const buffer = Buffer.from(bytes)
+
+  return await sharp(buffer)
+    .resize(1920, 1080, {
+      fit: 'inside',
+      withoutEnlargement: true,
+    })
+    .jpeg({
+      quality: 80,
+      progressive: true,
+    })
+    .toBuffer()
 }
 
 export async function GET(request: NextRequest, props: { params: RouteParams }) {
@@ -160,7 +178,7 @@ async function handleAllPosts(request: NextRequest) {
           select: {
             id: true,
             name: true,
-            username: true, // Added username
+            username: true,
             email: true,
           },
         },
@@ -198,10 +216,33 @@ async function handleCreatePost(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const { title, content, excerpt, coverImage, tags, isPublished } = await request.json()
+  const formData = await request.formData()
+
+  const title = formData.get("title") as string
+  const content = formData.get("content") as string
+  const excerpt = formData.get("excerpt") as string
+  const tagsString = formData.get("tags") as string
+  const tags = tagsString ? JSON.parse(tagsString) : []
+  const isPublished = formData.get("isPublished") === "true"
+  const coverImageFile = formData.get("coverImage") as File | null
 
   if (!title || !content) {
     return NextResponse.json({ error: "Title and content are required" }, { status: 400 })
+  }
+
+  let coverImage = "/placeholder.svg?height=400&width=600"
+
+  if (coverImageFile && coverImageFile.size > 0) {
+    // Compress the image before uploading
+    const compressedBuffer = await compressImage(coverImageFile)
+    const base64Image = `data:image/jpeg;base64,${compressedBuffer.toString("base64")}`
+
+    const uploadResponse = await cloudinary.uploader.upload(base64Image, {
+      folder: "blog-posts",
+      resource_type: "auto",
+    })
+
+    coverImage = uploadResponse.secure_url
   }
 
   let slug = generateSlug(title)
@@ -237,7 +278,7 @@ async function handleCreatePost(request: NextRequest) {
         select: {
           id: true,
           name: true,
-          username: true, // Added username
+          username: true,
           email: true,
         },
       },
@@ -373,7 +414,7 @@ async function handleUserPosts(request: NextRequest, urlUsername: string) {
           select: {
             id: true,
             name: true,
-            username: true, // Added username
+            username: true,
             email: true,
           },
         },
@@ -407,8 +448,7 @@ async function handleUserPosts(request: NextRequest, urlUsername: string) {
 
 async function handleSinglePost(request: NextRequest, urlUsername: string, postSlug: string) {
   const normalizedUsername = normalizeUsername(urlUsername)
-
-  console.log("[v0] handleSinglePost called with:", { urlUsername, postSlug, normalizedUsername })
+  const currentUser = await getAuthUser()
 
   const matchedUser = await prisma.user.findFirst({
     where: {
@@ -420,29 +460,24 @@ async function handleSinglePost(request: NextRequest, urlUsername: string, postS
     select: { id: true, username: true },
   })
 
-  console.log("[v0] User lookup result:", matchedUser)
-
   if (!matchedUser) {
-    const allUsers = await prisma.user.findMany({
-      select: { id: true, username: true, name: true },
-      take: 10,
-    })
-    console.log("[v0] Available users in DB:", allUsers)
     return NextResponse.json({ error: "User not found" }, { status: 404 })
   }
+
+  const isOwner = currentUser?.userId === matchedUser.id
 
   const post = await prisma.blogPost.findFirst({
     where: {
       userId: matchedUser.id,
       slug: postSlug,
-      isPublished: true,
+      ...(isOwner ? {} : { isPublished: true }),
     },
     include: {
       user: {
         select: {
           id: true,
           name: true,
-          username: true, // Added username
+          username: true,
           email: true,
         },
       },
@@ -462,8 +497,6 @@ async function handleSinglePost(request: NextRequest, urlUsername: string, postS
       },
     },
   })
-
-  console.log("[v0] Post lookup result:", post ? { id: post.id, slug: post.slug } : null)
 
   if (!post) {
     return NextResponse.json({ error: "Post not found" }, { status: 404 })
@@ -513,11 +546,35 @@ async function handleUpdatePost(request: NextRequest, urlUsername: string, postS
     return NextResponse.json({ error: "Post not found or unauthorized" }, { status: 404 })
   }
 
-  const data = await request.json()
+  const formData = await request.formData()
+
+  const title = formData.get("title") as string | null
+  const content = formData.get("content") as string | null
+  const excerpt = formData.get("excerpt") as string | null
+  const tagsString = formData.get("tags") as string | null
+  const tags = tagsString ? JSON.parse(tagsString) : null
+  const isPublishedString = formData.get("isPublished") as string | null
+  const isPublished = isPublishedString !== null ? isPublishedString === "true" : undefined
+  const coverImageFile = formData.get("coverImage") as File | null
+
+  let coverImage = existingPost.coverImage
+
+  if (coverImageFile && coverImageFile.size > 0) {
+    // Compress the image before uploading
+    const compressedBuffer = await compressImage(coverImageFile)
+    const base64Image = `data:image/jpeg;base64,${compressedBuffer.toString("base64")}`
+
+    const uploadResponse = await cloudinary.uploader.upload(base64Image, {
+      folder: "blog-posts",
+      resource_type: "auto",
+    })
+
+    coverImage = uploadResponse.secure_url
+  }
 
   let newSlug = postSlug
-  if (data.title && data.title !== existingPost.title) {
-    newSlug = generateSlug(data.title)
+  if (title && title !== existingPost.title) {
+    newSlug = generateSlug(title)
 
     const slugExists = await prisma.blogPost.findFirst({
       where: {
@@ -535,22 +592,22 @@ async function handleUpdatePost(request: NextRequest, urlUsername: string, postS
   const updatedPost = await prisma.blogPost.update({
     where: { id: existingPost.id },
     data: {
-      title: data.title || existingPost.title,
+      title: title || existingPost.title,
       slug: newSlug,
-      content: data.content || existingPost.content,
-      excerpt: data.excerpt || existingPost.excerpt,
-      coverImage: data.coverImage || existingPost.coverImage,
-      tags: data.tags || existingPost.tags,
-      isPublished: data.isPublished !== undefined ? data.isPublished : existingPost.isPublished,
-      publishedAt: data.isPublished && !existingPost.isPublished ? new Date() : existingPost.publishedAt,
-      readTime: data.content ? calculateReadTime(data.content) : existingPost.readTime,
+      content: content || existingPost.content,
+      excerpt: excerpt || existingPost.excerpt,
+      coverImage,
+      tags: tags || existingPost.tags,
+      isPublished: isPublished !== undefined ? isPublished : existingPost.isPublished,
+      publishedAt: isPublished && !existingPost.isPublished ? new Date() : existingPost.publishedAt,
+      readTime: content ? calculateReadTime(content) : existingPost.readTime,
     },
     include: {
       user: {
         select: {
           id: true,
           name: true,
-          username: true, // Added username
+          username: true,
           email: true,
         },
       },
