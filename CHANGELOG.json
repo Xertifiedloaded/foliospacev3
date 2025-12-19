@@ -85,10 +85,6 @@
       "date": "2025-01-20T11:25:00+01:00",
       "message": "Revamped billing UI and prepared subscription infrastructure."
     },
-
-   
-
-
     {
       "version": "v2.14.3",
       "date": "2025-12-05T16:49:10+01:00",
@@ -228,6 +224,11 @@
       "version": "v2.11.3",
       "date": "2025-12-07T10:15:00+01:00",
       "message": "Added premium subscription system, enforced CV download limits for free users, and patched React Server Components RCE vulnerability."
+    },
+    {
+      "version": "v2.11.4",
+      "date": "2025-12-19T07:45:18.310Z",
+      "message": "fixed blog metadata"
     }
   ]
 }
