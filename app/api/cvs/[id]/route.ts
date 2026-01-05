@@ -58,12 +58,17 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const updatedCV = await prisma.cV.update({
       where: { id },
       data: {
-        title: body.title,
-        personalInfo: body.personalInfo,
-        educations: body.educations,
-        experiences: body.experiences,
-        skills: body.skills,
-        projects: body.projects,
+        ...(body.title !== undefined && { title: body.title }),
+        ...(body.personalInfo !== undefined && { personalInfo: body.personalInfo }),
+        ...(body.educations !== undefined && { educations: body.educations }),
+        ...(body.experiences !== undefined && { experiences: body.experiences }),
+        ...(body.skills !== undefined && { skills: body.skills }),
+        ...(body.projects !== undefined && { projects: body.projects }),
+        ...(body.certificates !== undefined && { certificates: body.certificates }),
+        ...(body.awards !== undefined && { awards: body.awards }),
+        ...(body.showProjects !== undefined && { showProjects: body.showProjects }),
+        ...(body.showCertificates !== undefined && { showCertificates: body.showCertificates }),
+        ...(body.showAwards !== undefined && { showAwards: body.showAwards }),
         updatedAt: new Date(),
       },
     })

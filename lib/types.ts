@@ -48,11 +48,16 @@ export interface CVData {
   id: string
   userId: string
   title: string
-  personalInfo: PersonalInfo
-  educations: Education[]
-  experiences: Experience[]
-  skills: Skill[]
-  projects: Project[]
+  personalInfo: Record<string, unknown>
+  educations: unknown[]
+  experiences: unknown[]
+  skills: unknown[]
+  projects: unknown[]
+  certificates: unknown[]
+  awards: unknown[]
+  showProjects?: boolean
+  showCertificates?: boolean
+  showAwards?: boolean
   createdAt: string
   updatedAt: string
 }

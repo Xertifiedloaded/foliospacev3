@@ -41,6 +41,11 @@ export async function POST(request: NextRequest) {
         experiences: body.experiences || [],
         skills: body.skills || [],
         projects: body.projects || [],
+        certificates: body.certificates || [],
+        awards: body.awards || [],
+        showProjects: body.showProjects || false,
+        showCertificates: body.showCertificates || false,
+        showAwards: body.showAwards || false,
       },
     })
 

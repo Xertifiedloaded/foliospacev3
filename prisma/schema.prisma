@@ -124,7 +124,11 @@ model CV {
   projects     Json     @default("[]")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  
+  certificates Json     @default("[]")
+  awards       Json     @default("[]")
+  showCertificates Boolean @default(false)
+  showProjects Boolean @default(false)
+  showAwards       Boolean @default(false)
   @@index([userId])
   @@index([templateId])
 }

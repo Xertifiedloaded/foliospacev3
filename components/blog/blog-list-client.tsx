@@ -37,9 +37,6 @@ export default function BlogListClient({ initialPosts }: { initialPosts: BlogPos
   const [category, setCategory] = useState<"latest" | "recent" | "trending">("latest")
   const [isLoading, setIsLoading] = useState(true)
 
-  /**
-   * FIX: Prevent loading from ending before posts hydrate.
-   */
   useEffect(() => {
     if (initialPosts && initialPosts.length > 0) {
       const timer = setTimeout(() => setIsLoading(false), 900)
@@ -47,9 +44,7 @@ export default function BlogListClient({ initialPosts }: { initialPosts: BlogPos
     }
   }, [initialPosts])
 
-  /**
-   * Categorization + sorting
-   */
+
   const categorizedPosts = useMemo(() => {
     if (!initialPosts) return { trending: [], latest: [], recent: [] }
 
@@ -95,7 +90,6 @@ export default function BlogListClient({ initialPosts }: { initialPosts: BlogPos
 
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
 
-        {/* HEADER */}
         {isLoading ? (
           <div className="mb-10">
             <Skeleton className="h-10 w-72 mb-4" />
@@ -118,7 +112,6 @@ export default function BlogListClient({ initialPosts }: { initialPosts: BlogPos
           </motion.div>
         )}
 
-        {/* SEARCH */}
         {isLoading ? (
           <Skeleton className="w-full h-12 mb-6 rounded-lg" />
         ) : (
@@ -133,7 +126,6 @@ export default function BlogListClient({ initialPosts }: { initialPosts: BlogPos
           </div>
         )}
 
-        {/* CATEGORY & GRID/LIST TOGGLE */}
         {isLoading ? (
           <div className="flex items-center justify-between mb-8">
             <Skeleton className="h-10 w-64 rounded-full" />

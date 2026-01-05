@@ -94,6 +94,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const educations = (cv.educations as unknown[]) || []
     const experiences = (cv.experiences as unknown[]) || []
     const skills = (cv.skills as unknown[]) || []
+    const projects = (cv.projects as unknown[]) || []
+    const certificates = (cv.certificates as unknown[]) || []
+    const awards = (cv.awards as unknown[]) || []
 
     const sortedExperiences = [...experiences].sort((a: any, b: any) => {
       const aActive = !a.endDate
@@ -343,6 +346,155 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           doc.setTextColor(style.textColor)
           doc.text(`Field of Study: ${edu.field}`, horizontalMargin + 2, yPosition)
           yPosition += 5
+        }
+      })
+      yPosition += 2
+    }
+
+    if (cv.showProjects && projects.length > 0) {
+      addSection("Projects")
+      projects.forEach((project: any, idx: number) => {
+        if (idx > 0) yPosition += 5
+        checkPageBreak(20)
+
+        doc.setFontSize(11)
+        doc.setFont("helvetica", "bold")
+        doc.setTextColor(style.primaryColor)
+        doc.text(project.name || project.title, horizontalMargin, yPosition)
+
+        if (project.startDate || project.endDate) {
+          doc.setFontSize(9)
+          doc.setFont("helvetica", "normal")
+          doc.setTextColor(style.secondaryColor)
+          const startYear = project.startDate ? project.startDate.split("-")[0] : ""
+          const endYear = project.endDate ? project.endDate.split("-")[0] : "Present"
+          const dateText = startYear && endYear ? `${startYear} - ${endYear}` : startYear || endYear
+          const dateWidth = doc.getTextWidth(dateText)
+          doc.text(dateText, pageWidth - horizontalMargin - dateWidth, yPosition)
+        }
+
+        yPosition += 5
+
+        if (project.technologies) {
+          doc.setFontSize(9)
+          doc.setFont("helvetica", "italic")
+          doc.setTextColor(style.secondaryColor)
+          doc.text(`Technologies: ${project.technologies}`, horizontalMargin + 2, yPosition)
+          yPosition += 5
+        }
+
+        if (project.description) {
+          doc.setFontSize(9)
+          doc.setFont("helvetica", "normal")
+          doc.setTextColor(style.textColor)
+          const descLines = doc.splitTextToSize(project.description, contentWidth - 5)
+          descLines.forEach((line: string) => {
+            checkPageBreak()
+            doc.text(line, horizontalMargin + 2, yPosition)
+            yPosition += 4.5
+          })
+        }
+
+        if (project.link || project.url) {
+          doc.setFontSize(9)
+          doc.setFont("helvetica", "normal")
+          doc.setTextColor(style.primaryColor)
+          doc.text(`Link: ${project.link || project.url}`, horizontalMargin + 2, yPosition)
+          yPosition += 5
+        }
+      })
+      yPosition += 2
+    }
+
+    if (cv.showCertificates && certificates.length > 0) {
+      addSection("Certifications")
+      certificates.forEach((cert: any, idx: number) => {
+        if (idx > 0) yPosition += 5
+        checkPageBreak(20)
+
+        doc.setFontSize(11)
+        doc.setFont("helvetica", "bold")
+        doc.setTextColor(style.primaryColor)
+        doc.text(cert.name || cert.title, horizontalMargin, yPosition)
+
+        if (cert.issueDate || cert.date) {
+          doc.setFontSize(9)
+          doc.setFont("helvetica", "normal")
+          doc.setTextColor(style.secondaryColor)
+          const issueYear = (cert.issueDate || cert.date).split("-")[0]
+          const dateWidth = doc.getTextWidth(issueYear)
+          doc.text(issueYear, pageWidth - horizontalMargin - dateWidth, yPosition)
+        }
+
+        yPosition += 5
+
+        if (cert.issuer || cert.organization) {
+          doc.setFontSize(10)
+          doc.setFont("helvetica", "bold")
+          doc.setTextColor(style.secondaryColor)
+          doc.text(cert.issuer || cert.organization, horizontalMargin + 2, yPosition)
+          yPosition += 5
+        }
+
+        if (cert.credentialId) {
+          doc.setFontSize(9)
+          doc.setFont("helvetica", "normal")
+          doc.setTextColor(style.textColor)
+          doc.text(`Credential ID: ${cert.credentialId}`, horizontalMargin + 2, yPosition)
+          yPosition += 5
+        }
+
+        if (cert.url || cert.link) {
+          doc.setFontSize(9)
+          doc.setFont("helvetica", "normal")
+          doc.setTextColor(style.primaryColor)
+          doc.text(`Verify: ${cert.url || cert.link}`, horizontalMargin + 2, yPosition)
+          yPosition += 5
+        }
+      })
+      yPosition += 2
+    }
+
+    if (cv.showAwards && awards.length > 0) {
+      addSection("Awards & Honors")
+      awards.forEach((award: any, idx: number) => {
+        if (idx > 0) yPosition += 5
+        checkPageBreak(20)
+
+        doc.setFontSize(11)
+        doc.setFont("helvetica", "bold")
+        doc.setTextColor(style.primaryColor)
+        doc.text(award.name || award.title, horizontalMargin, yPosition)
+
+        if (award.date || award.year) {
+          doc.setFontSize(9)
+          doc.setFont("helvetica", "normal")
+          doc.setTextColor(style.secondaryColor)
+          const awardYear = award.year || (award.date ? award.date.split("-")[0] : "")
+          const dateWidth = doc.getTextWidth(awardYear)
+          doc.text(awardYear, pageWidth - horizontalMargin - dateWidth, yPosition)
+        }
+
+        yPosition += 5
+
+        if (award.issuer || award.organization) {
+          doc.setFontSize(10)
+          doc.setFont("helvetica", "bold")
+          doc.setTextColor(style.secondaryColor)
+          doc.text(award.issuer || award.organization, horizontalMargin + 2, yPosition)
+          yPosition += 5
+        }
+
+        if (award.description) {
+          doc.setFontSize(9)
+          doc.setFont("helvetica", "normal")
+          doc.setTextColor(style.textColor)
+          const descLines = doc.splitTextToSize(award.description, contentWidth - 5)
+          descLines.forEach((line: string) => {
+            checkPageBreak()
+            doc.text(line, horizontalMargin + 2, yPosition)
+            yPosition += 4.5
+          })
         }
       })
       yPosition += 2

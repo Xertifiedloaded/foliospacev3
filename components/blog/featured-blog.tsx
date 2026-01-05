@@ -25,7 +25,7 @@ export default function FeaturedBlog({ blog }: FeaturedBlogProps) {
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${blog.coverImage})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/30" />
+        <div className="absolute inset-0 bg-linear-to-t from-black via-black/70 to-black/30" />
       </div>
       <div className="relative z-10 h-full min-h-[600px] md:min-h-[700px] flex items-end">
         <div className="container mx-auto px-4 md:px-6 lg:px-8 pb-12 md:pb-16">

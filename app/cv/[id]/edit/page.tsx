@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useAuth } from "@/hooks/useAuth"
 import { useRouter, useParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -9,6 +9,8 @@ import { ExperienceSection } from "@/components/cv-editor/experience-section"
 import { EducationSection } from "@/components/cv-editor/education-section"
 import { SkillsSection } from "@/components/cv-editor/skills-section"
 import { ProjectsSection } from "@/components/cv-editor/projects-section"
+import { CertificatesSection } from "@/components/cv-editor/certificates-section"
+import { AwardsSection } from "@/components/cv-editor/awards-section"
 import type { CVData } from "@/lib/types"
 import { Save, ArrowLeft } from "lucide-react"
 
@@ -21,6 +23,7 @@ export default function CVEditorPage() {
   const [cv, setCV] = useState<CVData | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const sectionsRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -46,6 +49,11 @@ export default function CVEditorPage() {
           experiences: data.experiences || [],
           skills: data.skills || [],
           projects: data.projects || [],
+          certificates: data.certificates || [],
+          awards: data.awards || [],
+          showProjects: data.showProjects ?? false,
+          showCertificates: data.showCertificates ?? false,
+          showAwards: data.showAwards ?? false,
         })
       } else {
         router.push("/dashboard")
@@ -72,6 +80,11 @@ export default function CVEditorPage() {
           experiences: cv.experiences,
           skills: cv.skills,
           projects: cv.projects,
+          certificates: cv.certificates,
+          awards: cv.awards,
+          showProjects: cv.showProjects,
+          showCertificates: cv.showCertificates,
+          showAwards: cv.showAwards,
         }),
       })
 
@@ -84,6 +97,10 @@ export default function CVEditorPage() {
     } finally {
       setSaving(false)
     }
+  }
+
+  const scrollToSectionsTop = () => {
+    sectionsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
   if (loading) {
@@ -111,17 +128,47 @@ export default function CVEditorPage() {
         </div>
       </div>
 
-      <main className="max-w-5xl mx-auto lg:px-6 py-8">
+      <main className="max-w-5xl mx-auto lg:px-6 py-8" ref={sectionsRef}>
         <div className="space-y-8">
           <PersonalInfoSection data={cv.personalInfo} onChange={(data) => setCV({ ...cv, personalInfo: data })} />
 
-          <ExperienceSection data={cv.experiences} onChange={(data) => setCV({ ...cv, experiences: data })} />
+          <ExperienceSection
+            data={cv.experiences}
+            onChange={(data) => setCV({ ...cv, experiences: data })}
+            onNewItemAdded={scrollToSectionsTop}
+          />
 
-          <EducationSection data={cv.educations} onChange={(data) => setCV({ ...cv, educations: data })} />
+          <EducationSection
+            data={cv.educations}
+            onChange={(data) => setCV({ ...cv, educations: data })}
+            onNewItemAdded={scrollToSectionsTop}
+          />
 
           <SkillsSection data={cv.skills} onChange={(data) => setCV({ ...cv, skills: data })} />
 
-          <ProjectsSection data={cv.projects} onChange={(data) => setCV({ ...cv, projects: data })} />
+          <ProjectsSection
+            data={cv.projects}
+            onChange={(data) => setCV({ ...cv, projects: data })}
+            onNewItemAdded={scrollToSectionsTop}
+            showProjects={cv.showProjects}
+            onShowChange={(show) => setCV({ ...cv, showProjects: show })}
+          />
+
+          <CertificatesSection
+            data={cv.certificates}
+            onChange={(data) => setCV({ ...cv, certificates: data })}
+            onNewItemAdded={scrollToSectionsTop}
+            showCertificates={cv.showCertificates}
+            onShowChange={(show) => setCV({ ...cv, showCertificates: show })}
+          />
+
+          <AwardsSection
+            data={cv.awards}
+            onChange={(data) => setCV({ ...cv, awards: data })}
+            onNewItemAdded={scrollToSectionsTop}
+            showAwards={cv.showAwards}
+            onShowChange={(show) => setCV({ ...cv, showAwards: show })}
+          />
         </div>
       </main>
     </div>

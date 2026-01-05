@@ -1,10 +1,11 @@
 "use client"
 
+import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import type { Skill } from "@/lib/types"
-import { Plus, X } from "lucide-react"
+import { Plus, X, ChevronDown, ChevronUp } from "lucide-react"
 
 interface SkillsSectionProps {
   data: Skill[]
@@ -12,6 +13,8 @@ interface SkillsSectionProps {
 }
 
 export function SkillsSection({ data, onChange }: SkillsSectionProps) {
+  const [isExpanded, setIsExpanded] = useState(false)
+
   const addSkill = () => {
     const newSkill: Skill = {
       id: Date.now().toString(),
@@ -31,56 +34,83 @@ export function SkillsSection({ data, onChange }: SkillsSectionProps) {
 
   return (
     <Card className="p-2 lg:p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Skills</h2>
-        <Button onClick={addSkill} size="sm" variant="outline">
-          <Plus className="h-4 w-4 mr-2" />
-          Add
-        </Button>
-      </div>
-
-      <div className="flex flex-wrap gap-2">
-        {data.map((skill) => (
-          <div
-            key={skill.id}
-            className="flex items-center gap-2 px-3 py-1 rounded-full bg-accent/20 border border-accent/30"
+      <div 
+        className="flex items-center justify-between mb-4 cursor-pointer"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center gap-2">
+          <h2 className="text-xl font-semibold">Skills</h2>
+          {data.length > 0 && (
+            <span className="text-sm text-muted-foreground">({data.length})</span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <Button 
+            onClick={(e) => {
+              e.stopPropagation()
+              addSkill()
+              setIsExpanded(true)
+            }} 
+            size="sm" 
+            variant="outline"
           >
-            <span className="text-sm">{skill.name || "Skill"}</span>
-            <button onClick={() => removeSkill(skill.id)} className="text-muted-foreground hover:text-foreground">
-              <X className="h-3 w-3" />
-            </button>
-          </div>
-        ))}
+            <Plus className="h-4 w-4 mr-2" />
+            Add
+          </Button>
+          {isExpanded ? (
+            <ChevronUp className="h-5 w-5 text-muted-foreground" />
+          ) : (
+            <ChevronDown className="h-5 w-5 text-muted-foreground" />
+          )}
+        </div>
       </div>
 
-      <div className="mt-4 space-y-2">
-        {data.map((skill) => (
-          <div key={skill.id} className="flex gap-2">
-            <Input
-              value={skill.name}
-              onChange={(e) => updateSkill(skill.id, { name: e.target.value })}
-              placeholder="Skill name (e.g., React, Project Management)"
-            />
-            <select
-              value={skill.level}
-              onChange={(e) =>
-                updateSkill(skill.id, {
-                  level: e.target.value as "beginner" | "intermediate" | "advanced" | "expert",
-                })
-              }
-              className="px-3 py-2 rounded-md border border-input bg-background text-sm"
-            >
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
-              <option value="expert">Expert</option>
-            </select>
+      {isExpanded && (
+        <>
+          <div className="flex flex-wrap gap-2">
+            {data.map((skill) => (
+              <div
+                key={skill.id}
+                className="flex items-center gap-2 px-3 py-1 rounded-full bg-accent/20 border border-accent/30"
+              >
+                <span className="text-sm">{skill.name || "Skill"}</span>
+                <button onClick={() => removeSkill(skill.id)} className="text-muted-foreground hover:text-foreground">
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      {data.length === 0 && (
-        <p className="text-center text-muted-foreground py-4">No skills yet. Add some to highlight your expertise.</p>
+          <div className="mt-4 space-y-2">
+            {data.map((skill) => (
+              <div key={skill.id} className="flex gap-2">
+                <Input
+                  value={skill.name}
+                  onChange={(e) => updateSkill(skill.id, { name: e.target.value })}
+                  placeholder="Skill name (e.g., React, Project Management)"
+                />
+                <select
+                  value={skill.level}
+                  onChange={(e) =>
+                    updateSkill(skill.id, {
+                      level: e.target.value as "beginner" | "intermediate" | "advanced" | "expert",
+                    })
+                  }
+                  className="px-3 py-2 rounded-md border border-input bg-background text-sm"
+                >
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+            ))}
+          </div>
+
+          {data.length === 0 && (
+            <p className="text-center text-muted-foreground py-4">No skills yet. Add some to highlight your expertise.</p>
+          )}
+        </>
       )}
     </Card>
   )
