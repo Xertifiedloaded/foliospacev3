@@ -1,4 +1,4 @@
-// Type definitions for CV sections
+
 export interface PersonalInfo {
   fullName?: string
   email?: string
