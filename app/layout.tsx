@@ -26,11 +26,11 @@ export const metadata: Metadata = {
     apple: "logo.svg",
   },
 }
-export const viewport = {
-  width: 'device-width',
-  initialScale: 0.45,
-  userScalable: false,
-};
+// export const viewport = {
+//   width: 'device-width',
+//   initialScale: 0.45,
+//   userScalable: false,
+// };
 export default function RootLayout({
   children,
 }: Readonly<{
