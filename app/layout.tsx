@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     title: "FolioSpace - Portfolio Manager",
     description:
       "Create, manage, and export multiple professional CVs with FolioSpace.",
-    images: ["/logo.svg"],
+    images: ["https://foliospace.live/og-image.svg"],
   },
 
   robots: {
