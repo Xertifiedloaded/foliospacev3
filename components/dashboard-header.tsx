@@ -3,7 +3,8 @@
 import { useAuth } from "@/hooks/useAuth"
 import Link from "next/link"
 import { useState } from "react"
-import { Menu, X, LogOut, FileText, Plus, VerifiedIcon } from "lucide-react"
+import { Menu, X, LogOut, Home, Crown, User } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 
 export function DashboardHeader() {
   const { user, logout, isPremium } = useAuth()
@@ -15,67 +16,84 @@ export function DashboardHeader() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-background border-b border-border backdrop-blur-md">
+    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link
             href="/"
-            className="shrink-0 font-bold text-xl text-foreground hover:text-accent transition-colors"
+            className="shrink-0 font-bold text-xl bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent hover:from-primary/80 hover:to-primary/40 transition-all"
           >
             Foliospace
           </Link>
 
-          <div className="hidden text-xs font-bold  md:flex items-center gap-8">
-            <Link href="/blog" className="flex items-center gap-2 text-foreground hover:text-accent transition-colors">
-              <FileText size={18} />
-              <span>Blog</span>
-            </Link>
-            <Link href="/admin/posts" className="flex items-center gap-2 text-foreground hover:text-accent transition-colors">
-              <FileText size={18} />
-              <span>Manage Blogs</span>
-            </Link>
-
-            <Link
-              href="/blog/new"
-              className="flex items-center gap-2 text-foreground hover:text-accent transition-colors"
+          <div className="hidden md:flex items-center gap-6">
+            <Link 
+              href="/" 
+              className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
-              <Plus size={18} />
-              <span>New Post</span>
+              <Home size={16} />
+              <span>Dashboard</span>
             </Link>
+            
+            <button 
+              disabled
+              className="flex items-center gap-2 text-sm font-medium text-muted-foreground/50 cursor-not-allowed"
+            >
+              <span>Blog</span>
+              <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                Coming Soon
+              </Badge>
+            </button>
           </div>
 
+  
           <div className="hidden md:flex items-center gap-4">
             {user ? (
               <>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1">
-                    <p className="text-xs font-medium capitalize text-foreground">{user.username}
-                    </p>
-                    {isPremium && <span><VerifiedIcon color="green" size={12} /></span>}
+                <div className="flex items-center gap-3 px-3 py-1.5 rounded-lg bg-card border border-border/50">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-linear-to-br from-primary to-primary/60 flex items-center justify-center text-primary-foreground text-sm font-semibold">
+                      {user.username.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-sm font-semibold text-foreground">
+                          {user.username}
+                        </p>
+                        {isPremium && (
+                          <Crown className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
+                        )}
+                      </div>
+                      <p className="text-[10px] text-muted-foreground capitalize">
+                        {user.subscriptionTier}
+                      </p>
+                    </div>
                   </div>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center text-xs gap-2 px-4 py-2 rounded-lg bg-card hover:bg-muted text-foreground transition-colors border border-border"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-card hover:bg-muted text-foreground transition-all border border-border/50 hover:border-border text-sm font-medium"
                 >
-                  <LogOut size={15} />
+                  <LogOut size={16} />
                   <span>Logout</span>
                 </button>
               </>
             ) : (
               <Link
                 href="/login"
-                className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors font-medium"
+                className="px-6 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all font-medium shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30"
               >
                 Login
               </Link>
             )}
           </div>
 
+          {/* Mobile Menu Button */}
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 rounded-lg text-foreground hover:bg-card transition-colors"
+              aria-label="Toggle menu"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -83,41 +101,53 @@ export function DashboardHeader() {
         </div>
       </div>
 
+      {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden text-sm font-bold bg-card border-t border-border">
-          <div className="px-4 py-4 space-y-4">
-            <Link
-              href="/blog"
-              className="block text-foreground hover:text-accent transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              Blog
-            </Link>
+        <div className="md:hidden bg-card/95 backdrop-blur-xl border-t border-border/50 shadow-lg">
+          <div className="px-4 py-6 space-y-4">
+            {user && (
+              <div className="pb-4 border-b border-border/50">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-background">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-primary-foreground font-semibold">
+                    {user.username.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-sm font-semibold text-foreground">
+                        {user.username}
+                      </p>
+                      {isPremium && (
+                        <Crown className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground capitalize">
+                      {user.subscriptionTier}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <Link
-              href="/blog/new"
-              className="block text-foreground hover:text-accent transition-colors"
+              href="/"
+              className="flex items-center gap-3 text-foreground hover:text-primary transition-colors font-medium"
               onClick={() => setIsOpen(false)}
             >
-              New Post
+              <Home size={18} />
+              <span>Dashboard</span>
             </Link>
-            <Link
-              href="/admin/posts"
-              className="block text-foreground hover:text-accent transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              Blog Management
-            </Link>
-            <div className="flex items-center gap-1">
-              <p className="text-xs font-medium capitalize text-foreground">{user.username}
-              </p>
-              {isPremium && <span><VerifiedIcon color="green" size={12} /></span>}
+
+            <div className="flex items-center gap-3 text-muted-foreground/50">
+              <span className="font-medium">Blog</span>
+              <Badge variant="secondary" className="text-[10px] px-2 py-0.5">
+                Coming Soon
+              </Badge>
             </div>
-            {user ? (
 
+            {user ? (
               <button
                 onClick={handleLogout}
-                className="w-full mt-6 text-xs flex items-center gap-2 px-4 py-2 rounded-lg bg-card hover:bg-muted text-foreground transition-colors border border-border text-left"
+                className="w-full mt-4 flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-background hover:bg-muted text-foreground transition-all border border-border/50 hover:border-border font-medium"
               >
                 <LogOut size={18} />
                 <span>Logout</span>
@@ -125,7 +155,7 @@ export function DashboardHeader() {
             ) : (
               <Link
                 href="/login"
-                className="block px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-accent text-center font-medium"
+                className="block w-full mt-4 px-4 py-3 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 text-center font-medium shadow-lg shadow-primary/25"
                 onClick={() => setIsOpen(false)}
               >
                 Login
@@ -137,7 +167,3 @@ export function DashboardHeader() {
     </nav>
   )
 }
-
-
-
-

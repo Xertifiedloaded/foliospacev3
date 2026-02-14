@@ -1,130 +1,193 @@
 import Link from "next/link"
-import { FileText } from "lucide-react"
+import { FileText, Twitter, Github, Linkedin, Mail } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-background">
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          <div className="col-span-2 md:col-span-1 space-y-4">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                <FileText className="h-5 w-5 text-primary-foreground" />
+    <footer className="relative border-t border-slate-800 bg-slate-950 overflow-hidden">
+      {/* Subtle gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/50 to-slate-950" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl" />
+
+      <div className="relative max-w-7xl mx-auto px-6 py-16">
+        {/* Main Footer Content */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
+          {/* Brand Column */}
+          <div className="lg:col-span-2 space-y-6">
+            <Link href="/" className="inline-flex items-center gap-3 group">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <FileText className="h-6 w-6 text-white" />
               </div>
-              <span className="font-bold text-lg">FolioSpace</span>
+              <span className="font-bold text-2xl bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+                FolioSpace
+              </span>
             </Link>
-            <p className="text-sm text-muted-foreground">
-              Build professional resumes that get you hired.
+            <p className="text-base text-slate-400 leading-relaxed max-w-sm">
+              Build professional, ATS-optimized resumes that help you land your dream job. Simple, fast, and effective.
             </p>
+            {/* Social Links */}
+            <div className="flex items-center gap-3">
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-10 w-10 rounded-xl bg-slate-900 border border-slate-800 hover:border-blue-500/50 flex items-center justify-center text-slate-400 hover:text-blue-400 transition-all hover:scale-110"
+              >
+                <Twitter className="h-4 w-4" />
+              </a>
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-10 w-10 rounded-xl bg-slate-900 border border-slate-800 hover:border-purple-500/50 flex items-center justify-center text-slate-400 hover:text-purple-400 transition-all hover:scale-110"
+              >
+                <Github className="h-4 w-4" />
+              </a>
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-10 w-10 rounded-xl bg-slate-900 border border-slate-800 hover:border-blue-500/50 flex items-center justify-center text-slate-400 hover:text-blue-400 transition-all hover:scale-110"
+              >
+                <Linkedin className="h-4 w-4" />
+              </a>
+              <a
+                href="mailto:support@foliospace.com"
+                className="h-10 w-10 rounded-xl bg-slate-900 border border-slate-800 hover:border-green-500/50 flex items-center justify-center text-slate-400 hover:text-green-400 transition-all hover:scale-110"
+              >
+                <Mail className="h-4 w-4" />
+              </a>
+            </div>
           </div>
 
-
-          <div className="space-y-4">
-            <h4 className="font-semibold text-sm">Product</h4>
-            <ul className="space-y-2">
+          {/* Product Column */}
+          <div className="space-y-5">
+            <h4 className="font-bold text-sm text-white uppercase tracking-wider">Product</h4>
+            <ul className="space-y-3">
               <li>
                 <Link
                   href="#features"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm text-slate-400 hover:text-white transition-colors inline-flex items-center gap-2 group"
                 >
-                  Features
+                  <span className="group-hover:translate-x-1 transition-transform">Features</span>
                 </Link>
               </li>
-
               <li>
                 <Link
-                  href="/"
-                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  href="#pricing"
+                  className="text-sm text-slate-400 hover:text-white transition-colors inline-flex items-center gap-2 group"
                 >
-                  Pricing
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-yellow-500 text-black font-medium animate-pulse">
-                    Coming Soon
-                  </span>
+                  <span className="group-hover:translate-x-1 transition-transform">Pricing</span>
                 </Link>
               </li>
-
               <li>
-                <Link
-                  href="/"
-                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Templates
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-yellow-500 text-black font-medium animate-pulse">
-                    Coming Soon
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-600">Templates</span>
+                  <span className="text-[10px] px-2 py-1 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold uppercase tracking-wide shadow-lg">
+                    Soon
                   </span>
-                </Link>
+                </div>
+              </li>
+              <li>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-600">Portfolio</span>
+                  <span className="text-[10px] px-2 py-1 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold uppercase tracking-wide shadow-lg">
+                    Soon
+                  </span>
+                </div>
               </li>
             </ul>
           </div>
 
-          <div className="space-y-4">
-            <h4 className="font-semibold text-sm">Company</h4>
-            <ul className="space-y-2">
+          {/* Company Column */}
+          <div className="space-y-5">
+            <h4 className="font-bold text-sm text-white uppercase tracking-wider">Company</h4>
+            <ul className="space-y-3">
               <li>
                 <Link
                   href="/about"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm text-slate-400 hover:text-white transition-colors inline-flex items-center gap-2 group"
                 >
-                  About
+                  <span className="group-hover:translate-x-1 transition-transform">About Us</span>
                 </Link>
               </li>
               <li>
                 <Link
                   href="/contact"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm text-slate-400 hover:text-white transition-colors inline-flex items-center gap-2 group"
                 >
-                  Contact
+                  <span className="group-hover:translate-x-1 transition-transform">Contact</span>
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/"
-                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Blog
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-yellow-500 text-black font-medium animate-pulse">
-                    Coming Soon
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-600">Blog</span>
+                  <span className="text-[10px] px-2 py-1 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold uppercase tracking-wide shadow-lg">
+                    Soon
                   </span>
-                </Link>
+                </div>
+              </li>
+              <li>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-600">Careers</span>
+                  <span className="text-[10px] px-2 py-1 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold uppercase tracking-wide shadow-lg">
+                    Soon
+                  </span>
+                </div>
               </li>
             </ul>
           </div>
 
-          <div className="space-y-4">
-            <h4 className="font-semibold text-sm">Legal</h4>
-            <ul className="space-y-2">
+          {/* Legal Column */}
+          <div className="space-y-5">
+            <h4 className="font-bold text-sm text-white uppercase tracking-wider">Legal</h4>
+            <ul className="space-y-3">
               <li>
                 <Link
                   href="/changelog"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm text-slate-400 hover:text-white transition-colors inline-flex items-center gap-2 group"
                 >
-                  Changelog
+                  <span className="group-hover:translate-x-1 transition-transform">Changelog</span>
                 </Link>
               </li>
               <li>
                 <Link
                   href="/privacy"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm text-slate-400 hover:text-white transition-colors inline-flex items-center gap-2 group"
                 >
-                  Privacy Policy
+                  <span className="group-hover:translate-x-1 transition-transform">Privacy Policy</span>
                 </Link>
               </li>
               <li>
                 <Link
                   href="/terms"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm text-slate-400 hover:text-white transition-colors inline-flex items-center gap-2 group"
                 >
-                  Terms of Service
+                  <span className="group-hover:translate-x-1 transition-transform">Terms of Service</span>
                 </Link>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} FolioSpace. All rights reserved.
-          </p>
+        {/* Bottom Bar */}
+        <div className="pt-8 border-t border-slate-800">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-slate-500">
+              © {new Date().getFullYear()} <span className="text-slate-400 font-semibold">FolioSpace</span>. All rights reserved.
+            </p>
+            <div className="flex items-center gap-6">
+              <Link href="/sitemap" className="text-sm text-slate-500 hover:text-slate-300 transition-colors">
+                Sitemap
+              </Link>
+              <Link href="/cookies" className="text-sm text-slate-500 hover:text-slate-300 transition-colors">
+                Cookie Policy
+              </Link>
+              <Link href="/accessibility" className="text-sm text-slate-500 hover:text-slate-300 transition-colors">
+                Accessibility
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
