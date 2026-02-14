@@ -88,7 +88,6 @@ export function DashboardHeader() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -108,7 +107,7 @@ export function DashboardHeader() {
             {user && (
               <div className="pb-4 border-b border-border/50">
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-background">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-primary-foreground font-semibold">
+                  <div className="w-10 h-10 rounded-full bg-linear-to-br from-primary to-primary/60 flex items-center justify-center text-primary-foreground font-semibold">
                     {user.username.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex flex-col">

@@ -47,7 +47,6 @@ export function CVCard({ id, title, updatedAt, onDuplicate, onDelete, onExport }
             </p>
           </div>
 
-          {/* Desktop Actions */}
           <div className="hidden lg:flex items-center gap-1 shrink-0">
             <Link href={`/cv/${id}/edit`}>
               <Button
@@ -113,7 +112,6 @@ export function CVCard({ id, title, updatedAt, onDuplicate, onDelete, onExport }
             </Button>
           </div>
 
-          {/* Mobile / Dropdown Actions */}
           <div className="lg:hidden shrink-0">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
