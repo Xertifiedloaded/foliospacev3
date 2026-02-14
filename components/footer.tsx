@@ -33,7 +33,7 @@ export function Footer() {
 
               <li>
                 <Link
-                  href="/pricing"
+                  href="/"
                   className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Pricing
@@ -45,7 +45,7 @@ export function Footer() {
 
               <li>
                 <Link
-                  href="/templates"
+                  href="/"
                   className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Templates
@@ -78,7 +78,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/blog"
+                  href="/"
                   className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Blog
