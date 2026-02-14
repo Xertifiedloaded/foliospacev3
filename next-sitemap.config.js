@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: process.env.SITE_URL || 'https://foliospace.org.ng', 
+  siteUrl: process.env.SITE_URL || 'https://foliospace.live', 
   generateRobotsTxt: true,              
   sitemapSize: 5000,                     
   changefreq: 'daily',

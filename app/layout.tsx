@@ -1,54 +1,98 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
-import { Analytics } from '@vercel/analytics/next'
-import { openSans, nunito, bebas, montserrat } from "@/lib/fonts";
-import { GoogleAnalytics } from '@next/third-parties/google'
+
+import { openSans, nunito, bebas, montserrat } from "@/lib/fonts"
+import { Analytics } from "@vercel/analytics/next"
+import { GoogleAnalytics } from "@next/third-parties/google"
+
 export const metadata: Metadata = {
-  title: "FolioSpace - Multi-CV Manager",
-  description: "Create, manage, and export multiple professional CVs with FolioSpace",
+  metadataBase: new URL("https://foliospace.live"), // 🔥 CHANGE THIS
+
+  title: {
+    default: "FolioSpace - Portfolio Manager",
+    template: "%s | FolioSpace",
+  },
+
+  description:
+    "Create, manage, and export multiple professional CVs with FolioSpace.",
+
+  keywords: [
+    "CV builder",
+    "Resume builder",
+    "Professional CV",
+    "Online resume",
+    "FolioSpace",
+  ],
+
+  authors: [{ name: "FolioSpace" }],
+  creator: "FolioSpace",
+  publisher: "FolioSpace",
+
   icons: {
-    icon: [
+    icon: "/logo.svg",
+    shortcut: "/logo.svg",
+    apple: "/logo.svg",
+  },
+
+  openGraph: {
+    title: "FolioSpace - Portfolio Manager",
+    description:
+      "Create, manage, and export multiple professional CVs with FolioSpace.",
+    url: "https://foliospace.live", 
+    siteName: "FolioSpace",
+    images: [
       {
-        url: "logo.svg",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "logo.svg",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "logo.svg",
-        type: "image/svg+xml",
+        url: "/logo.svg", 
+        width: 1200,
+        height: 630,
+        alt: "FolioSpace - Portfolio Manager",
       },
     ],
-    apple: "logo.svg",
+    locale: "en_US",
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "FolioSpace - Portfolio Manager",
+    description:
+      "Create, manage, and export multiple professional CVs with FolioSpace.",
+    images: ["/logo.svg"],
+  },
+
+  robots: {
+    index: true,
+    follow: true,
   },
 }
-// export const viewport = {
-//   width: 'device-width',
-//   initialScale: 0.45,
-//   userScalable: false,
-// };
+
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head />
-      <body className={`
+      <body
+        className={`
           ${montserrat.variable}
           ${openSans.variable}
           ${nunito.variable}
           ${bebas.variable}
           font-sans antialiased bg-background text-foreground
-        `}>{children}
-               <GoogleAnalytics gaId={process.env.GoogleAnalytics} />
-          <Analytics />
-        </body>
+        `}
+      >
+        {children}
+        {process.env.GoogleAnalytics && (
+          <GoogleAnalytics gaId={process.env.GoogleAnalytics} />
+        )}
+        <Analytics />
+      </body>
     </html>
   )
 }
+
+
+
+<GoogleAnalytics gaId={process.env.GoogleAnalytics} />
