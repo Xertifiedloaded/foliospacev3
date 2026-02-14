@@ -7,7 +7,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { GoogleAnalytics } from "@next/third-parties/google"
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://foliospace.live"), // 🔥 CHANGE THIS
+  metadataBase: new URL("https://foliospace.live"), 
 
   title: {
     default: "FolioSpace - Portfolio Manager",
@@ -29,8 +29,11 @@ export const metadata: Metadata = {
   creator: "FolioSpace",
   publisher: "FolioSpace",
 
+
   icons: {
-    icon: "/logo.svg",
+    icon: [
+      { url: "/logo.svg", sizes: "48x48", type: "image/x-icon" },
+    ],
     shortcut: "/logo.svg",
     apple: "/logo.svg",
   },
@@ -39,11 +42,11 @@ export const metadata: Metadata = {
     title: "FolioSpace - Portfolio Manager",
     description:
       "Create, manage, and export multiple professional CVs with FolioSpace.",
-    url: "https://foliospace.live", 
+    url: "https://foliospace.live",
     siteName: "FolioSpace",
     images: [
       {
-        url: "/logo.svg", 
+        url: "https://foliospace.live/og-image.svg",
         width: 1200,
         height: 630,
         alt: "FolioSpace - Portfolio Manager",
@@ -94,5 +97,3 @@ export default function RootLayout({
 }
 
 
-
-<GoogleAnalytics gaId={process.env.GoogleAnalytics} />
