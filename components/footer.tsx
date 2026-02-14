@@ -4,15 +4,12 @@ import { FileText, Twitter, Github, Linkedin, Mail } from "lucide-react"
 export function Footer() {
   return (
     <footer className="relative border-t border-slate-800 bg-slate-950 overflow-hidden">
-      {/* Subtle gradient background */}
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900/50 to-slate-950" />
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl" />
 
       <div className="relative max-w-7xl mx-auto px-6 py-16">
-        {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
-          {/* Brand Column */}
           <div className="lg:col-span-2 space-y-6">
             <Link href="/" className="inline-flex items-center gap-3 group">
               <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
@@ -25,10 +22,9 @@ export function Footer() {
             <p className="text-base text-slate-400 leading-relaxed max-w-sm">
               Build professional, ATS-optimized resumes that help you land your dream job. Simple, fast, and effective.
             </p>
-            {/* Social Links */}
             <div className="flex items-center gap-3">
               <a
-                href="https://twitter.com"
+                href="https://x.com/xertifiedloaded"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="h-10 w-10 rounded-xl bg-slate-900 border border-slate-800 hover:border-blue-500/50 flex items-center justify-center text-slate-400 hover:text-blue-400 transition-all hover:scale-110"
@@ -36,7 +32,7 @@ export function Footer() {
                 <Twitter className="h-4 w-4" />
               </a>
               <a
-                href="https://github.com"
+                href="https://github.com/xertifiedloaded"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="h-10 w-10 rounded-xl bg-slate-900 border border-slate-800 hover:border-purple-500/50 flex items-center justify-center text-slate-400 hover:text-purple-400 transition-all hover:scale-110"
@@ -44,7 +40,7 @@ export function Footer() {
                 <Github className="h-4 w-4" />
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://linkedin.com/in/makinde-olaitan-702852240"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="h-10 w-10 rounded-xl bg-slate-900 border border-slate-800 hover:border-blue-500/50 flex items-center justify-center text-slate-400 hover:text-blue-400 transition-all hover:scale-110"
@@ -52,7 +48,7 @@ export function Footer() {
                 <Linkedin className="h-4 w-4" />
               </a>
               <a
-                href="mailto:support@foliospace.com"
+                href="mailto:foliospace@gmail.com"
                 className="h-10 w-10 rounded-xl bg-slate-900 border border-slate-800 hover:border-green-500/50 flex items-center justify-center text-slate-400 hover:text-green-400 transition-all hover:scale-110"
               >
                 <Mail className="h-4 w-4" />
@@ -60,7 +56,6 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Product Column */}
           <div className="space-y-5">
             <h4 className="font-bold text-sm text-white uppercase tracking-wider">Product</h4>
             <ul className="space-y-3">
@@ -73,6 +68,14 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-500">AI</span>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-medium uppercase tracking-wider">
+                    Soon
+                  </span>
+                </div>
+              </li>
+              <li>
                 <Link
                   href="#pricing"
                   className="text-sm text-slate-400 hover:text-white transition-colors inline-flex items-center gap-2 group"
@@ -82,16 +85,16 @@ export function Footer() {
               </li>
               <li>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-slate-600">Templates</span>
-                  <span className="text-[10px] px-2 py-1 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold uppercase tracking-wide shadow-lg">
+                  <span className="text-sm text-slate-500">Templates</span>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-medium uppercase tracking-wider">
                     Soon
                   </span>
                 </div>
               </li>
               <li>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-slate-600">Portfolio</span>
-                  <span className="text-[10px] px-2 py-1 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold uppercase tracking-wide shadow-lg">
+                  <span className="text-sm text-slate-500">Portfolio</span>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-medium uppercase tracking-wider">
                     Soon
                   </span>
                 </div>
@@ -99,7 +102,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Company Column */}
           <div className="space-y-5">
             <h4 className="font-bold text-sm text-white uppercase tracking-wider">Company</h4>
             <ul className="space-y-3">
@@ -121,16 +123,16 @@ export function Footer() {
               </li>
               <li>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-slate-600">Blog</span>
-                  <span className="text-[10px] px-2 py-1 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold uppercase tracking-wide shadow-lg">
+                  <span className="text-sm text-slate-500">Blog</span>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-medium uppercase tracking-wider">
                     Soon
                   </span>
                 </div>
               </li>
               <li>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-slate-600">Careers</span>
-                  <span className="text-[10px] px-2 py-1 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold uppercase tracking-wide shadow-lg">
+                  <span className="text-sm text-slate-500">Careers</span>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-medium uppercase tracking-wider">
                     Soon
                   </span>
                 </div>
@@ -138,7 +140,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Legal Column */}
           <div className="space-y-5">
             <h4 className="font-bold text-sm text-white uppercase tracking-wider">Legal</h4>
             <ul className="space-y-3">
@@ -170,7 +171,6 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className="pt-8 border-t border-slate-800">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-slate-500">

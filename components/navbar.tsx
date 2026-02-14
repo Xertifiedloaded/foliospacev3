@@ -29,6 +29,18 @@ export function Navbar() {
           <Link href="#pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             Pricing
           </Link>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground/50">AI</span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium uppercase tracking-wider">
+              Soon
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground/50">Blog</span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium uppercase tracking-wider">
+              Soon
+            </span>
+          </div>
           {user ? (
             <>
               <Button variant="ghost" size="sm" onClick={() => router.push("/dashboard")}>
@@ -70,6 +82,18 @@ export function Navbar() {
           >
             Pricing
           </Link>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground/50">AI</span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium uppercase tracking-wider">
+              Soon
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground/50">Blog</span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium uppercase tracking-wider">
+              Soon
+            </span>
+          </div>
           {user ? (
             <>
               <Button 

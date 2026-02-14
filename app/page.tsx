@@ -294,7 +294,7 @@ export default function Home() {
                           📍 Abeokuta, Nigeria
                         </span>
                         <span className="flex items-center gap-1.5 bg-slate-800/50 px-3 py-1.5 rounded-lg">
-                          ✉️ makinde@email.com
+                          ✉️ foliospace@gmail.com
                         </span>
                       </div>
                     </div>
