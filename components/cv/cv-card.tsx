@@ -3,9 +3,8 @@
 import { formatDistanceToNow } from "date-fns"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Edit, Eye, Copy, Download, Trash2, Globe2, MoreVertical } from "lucide-react"
+import { Edit, Eye, Copy, Trash2, Globe2, MoreVertical, Download } from "lucide-react"
 import Link from "next/link"
-import CVTemplateButton from "./cv-template-button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,14 +29,12 @@ export function CVCard({ id, title, updatedAt, onDuplicate, onDelete, onExport }
     <Card className="group hover:shadow-lg hover:border-primary/50 transition-all duration-200 overflow-hidden border-border/50">
       <CardContent className="p-0">
         <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-5">
-          {/* CV Icon/Avatar */}
           <div className="shrink-0">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 group-hover:border-primary/40 transition-colors">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-linear-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 group-hover:border-primary/40 transition-colors">
               <Edit className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
             </div>
           </div>
 
-          {/* CV Info */}
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-sm sm:text-base capitalize line-clamp-1 text-foreground group-hover:text-primary transition-colors mb-0.5 sm:mb-1">
               {title}
@@ -63,7 +60,15 @@ export function CVCard({ id, title, updatedAt, onDuplicate, onDelete, onExport }
               </Button>
             </Link>
 
-            <CVTemplateButton cvId={id} />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-9 px-3 text-purple-600 hover:text-purple-700 hover:bg-purple-50 dark:hover:bg-purple-950 transition-colors"
+              onClick={() => onExport(id)}
+            >
+              <Download className="h-4 w-4 mr-1.5" />
+              <span className="text-xs font-medium">PDF</span>
+            </Button>
 
             <Link href={`/portfolio/${id}`}>
               <Button
@@ -108,7 +113,7 @@ export function CVCard({ id, title, updatedAt, onDuplicate, onDelete, onExport }
             </Button>
           </div>
 
-          {/* Mobile/Tablet Dropdown Menu */}
+          {/* Mobile / Dropdown Actions */}
           <div className="lg:hidden shrink-0">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -120,6 +125,7 @@ export function CVCard({ id, title, updatedAt, onDuplicate, onDelete, onExport }
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
+
               <DropdownMenuContent align="end" className="w-44 sm:w-48">
                 <DropdownMenuItem asChild>
                   <Link href={`/cv/${id}/edit`} className="flex items-center cursor-pointer text-sm">
@@ -144,22 +150,36 @@ export function CVCard({ id, title, updatedAt, onDuplicate, onDelete, onExport }
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem
-                  onClick={() => onDuplicate(id)}
-                  className="cursor-pointer text-sm"
-                >
-                  <Copy className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2 text-amber-600" />
-                  <span>Duplicate</span>
+                <DropdownMenuItem asChild>
+                  <button
+                    className="flex items-center w-full text-sm"
+                    onClick={() => onDuplicate(id)}
+                  >
+                    <Copy className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2 text-amber-600" />
+                    <span>Duplicate</span>
+                  </button>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem asChild>
+                  <button
+                    className="flex items-center w-full text-sm"
+                    onClick={() => onExport(id)}
+                  >
+                    <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2 text-purple-600" />
+                    <span>Download</span>
+                  </button>
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem
-                  onClick={() => onDelete(id)}
-                  className="cursor-pointer text-red-600 focus:text-red-600 text-sm"
-                >
-                  <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2" />
-                  <span>Delete</span>
+                <DropdownMenuItem asChild>
+                  <button
+                    className="flex items-center w-full text-red-600 text-sm"
+                    onClick={() => onDelete(id)}
+                  >
+                    <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2" />
+                    <span>Delete</span>
+                  </button>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

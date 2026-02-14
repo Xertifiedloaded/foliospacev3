@@ -18,7 +18,7 @@ export default function CVTemplateButton({ cvId }: CVTemplateButtonProps) {
         variant="ghost"
         size="icon"
         onClick={() => setIsOpen(true)}
-        className="h-8 w-8 text-cyan-600 hover:text-cyan-700 hover:bg-cyan-50"
+        className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2  text-cyan-600 hover:text-cyan-700 hover:bg-cyan-50"
         title="Choose Template & Download"
       >
         <Download className="h-4 w-4" />
