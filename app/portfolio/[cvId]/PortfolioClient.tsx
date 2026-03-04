@@ -8,7 +8,7 @@ interface PortfolioClientProps {
     name: string
     email: string
     username: string
-    cvs: CVData[] 
+    cvs: CVData[]
   } | null
 }
 
@@ -31,7 +31,6 @@ export default function PortfolioClient({ userData }: PortfolioClientProps) {
     )
   }
 
-  // Handle case where cvs array is empty or undefined
   if (!userData.cvs || userData.cvs.length === 0) {
     return (
       <div className="min-h-screen bg-background">
@@ -102,52 +101,24 @@ export default function PortfolioClient({ userData }: PortfolioClientProps) {
     )
   }
 
-
-  const personalInfo = cv.personalInfo || {}
-  const educations = cv.educations || []
-  const experiences = cv.experiences || []
-  const skills = cv.skills || []
-  const projects = cv.projects || []
+  const portfolioCv: CVData = {
+    ...cv,
+    personalInfo:    cv.personalInfo    || {},
+    educations:      cv.educations      || [],
+    experiences:     cv.experiences     || [],
+    skills:          cv.skills          || [],
+    projects:        cv.projects        || [],
+    certificates:    cv.certificates    || [],
+    awards:          cv.awards          || [],
+    showProjects:     true,
+    showCertificates: true,
+    showAwards:       true,
+  }
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="border-b bg-card print:hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                <span className="text-xl sm:text-2xl font-bold text-primary">
-                  {personalInfo?.fullName?.charAt(0)?.toUpperCase() || 
-                   userData.name?.charAt(0)?.toUpperCase() || "?"}
-                </span>
-              </div>
-              <div>
-                {personalInfo?.fullName && (
-                  <h1 className="text-xl font-bold">{personalInfo.fullName}</h1>
-                )}
-                {personalInfo?.email && (
-                  <p className="text-xs text-blue-900">{personalInfo.email}</p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {cv.title && (
-            <div className="mt-4">
-              <h2 className="text-lg capitalize font-semibold text-foreground">
-                {cv.title}
-              </h2>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 lg:py-12">
-        <div className="bg-white rounded-lg shadow-xl overflow-hidden">
-          <CVPreview cv={cv} />
-        </div>
-
-        <div className="h-20 sm:hidden"></div>
+      <main className="sm:max-w-7xl mx-auto sm:px-4">
+        <CVPreview cv={portfolioCv} />
       </main>
     </div>
   )

@@ -126,7 +126,7 @@ export default function Home() {
 
       <div className="fixed inset-0 -z-10">
 
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-blue-950 to-purple-950" />
+        <div className="absolute inset-0 bg-linear-to-br from-slate-950 via-blue-950 to-purple-950" />
         
 
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/30 rounded-full mix-blend-screen filter blur-[128px] animate-pulse-slow" />

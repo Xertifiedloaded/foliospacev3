@@ -1,5 +1,4 @@
 'use client';
-
 import { users } from '@/lib';
 import { useState, useEffect } from 'react';
 import { Star, X } from 'lucide-react';
@@ -7,7 +6,6 @@ import { Star, X } from 'lucide-react';
 export default function RandomNotification() {
   const [notification, setNotification] = useState(null);
   const [isExiting, setIsExiting] = useState(false);
-
   const getRandomUser = () =>
     users[Math.floor(Math.random() * users.length)];
 
@@ -46,8 +44,8 @@ export default function RandomNotification() {
   return (
     <div className={`fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-50 max-w-[calc(100vw-2rem)] sm:max-w-xs ${isExiting ? 'animate-toastOut' : 'animate-toastIn'}`}>
       <div className="bg-white dark:bg-slate-900 shadow-lg rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden">
-        <div className="h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" />
-        
+        <div className="h-0.5 bg-linear-to-r from-blue-500 via-purple-500 to-pink-500" />
+
         <div className="p-2.5">
           <div className="flex items-center justify-between gap-2 mb-1.5">
             <div className="flex items-center gap-1">
@@ -66,12 +64,12 @@ export default function RandomNotification() {
 
           <div className="flex items-start gap-2">
             <div className="relative shrink-0">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 flex items-center justify-center text-sm border border-slate-200 dark:border-slate-700">
+              <div className="w-7 h-7 rounded-full bg-linear-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 flex items-center justify-center text-sm border border-slate-200 dark:border-slate-700">
                 {notification.avatar}
               </div>
               <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white dark:border-slate-900" />
             </div>
-            
+
             <div className="flex-1 min-w-0">
               <div className="flex items-baseline gap-1 mb-0.5">
                 <p className="font-semibold text-slate-900 dark:text-white text-[11px] truncate">
