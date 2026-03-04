@@ -16,7 +16,6 @@ export const metadata: Metadata = {
 
   description:
     "Create, manage, and export multiple professional CVs with FolioSpace.",
-
   keywords: [
     "CV builder",
     "Resume builder",
@@ -46,7 +45,7 @@ export const metadata: Metadata = {
     siteName: "FolioSpace",
     images: [
       {
-        url: "https://foliospace.live/og-image.svg",
+        url: "https://foliospace.live/portfolio.png",
         width: 1200,
         height: 630,
         alt: "FolioSpace - Portfolio Manager",
@@ -61,7 +60,7 @@ export const metadata: Metadata = {
     title: "FolioSpace - Portfolio Manager",
     description:
       "Create, manage, and export multiple professional CVs with FolioSpace.",
-    images: ["https://foliospace.live/og-image.svg"],
+    images: ["https://foliospace.live/portfolio.png"],
   },
 
   robots: {
