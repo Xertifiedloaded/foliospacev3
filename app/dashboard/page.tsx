@@ -186,7 +186,7 @@ export default function DashboardPage() {
             Account Overview
           </h2>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
             <Card className="border-border/50 hover:border-primary/50 transition-all hover:shadow-md">
               <CardContent className="p-3 sm:p-4 md:p-5">
                 <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3">
@@ -242,19 +242,6 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            <Card className="border-border/50 hover:border-primary/50 transition-all hover:shadow-md">
-              <CardContent className="p-3 sm:p-4 md:p-5">
-                <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3">
-                  <div className="p-1.5 sm:p-2 rounded-lg bg-orange-500/10">
-                    <Layers className="h-3 w-3 sm:h-4 sm:w-4 text-orange-600" />
-                  </div>
-                </div>
-                <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5 sm:mb-1">Templates</p>
-                <p className="text-sm sm:text-base md:text-lg font-bold">
-                  {user.templatesUsed}/{user.templatesLimit}
-                </p>
-              </CardContent>
-            </Card>
 
             <Card className="border-border/50 hover:border-primary/50 transition-all hover:shadow-md">
               <CardContent className="p-3 sm:p-4 md:p-5">
